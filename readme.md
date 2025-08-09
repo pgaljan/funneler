@@ -29,12 +29,15 @@
 *Main dashboard showing opportunities, stages, and key metrics*
 
 ### SharePoint Integration
-![Sharepoint List View](docs/images/opportunityList.png)
+
 *List View in Sharepoint*
-![SharePoint Calendar View](docs/images/calendarview.png)
+![Sharepoint List View](docs/images/opportunityList.png)
+
 *Calendar view in Sharepoint*
-![SharePoint Opportunity Form](docs/images/opportunityform.png)
+![SharePoint Calendar View](docs/images/calendarview.png)
+
 *Opportunity form*
+![SharePoint Opportunity Form](docs/images/opportunityform.png)
 
 
 ## Architecture
