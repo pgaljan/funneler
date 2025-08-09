@@ -1,18 +1,54 @@
-param(
-    [string]$TenantUrl = "https://cleansheet5.sharepoint.com",
-    [string]$SiteUrl = "https://cleansheet5.sharepoint.com/sites/SalesFunnel/",
-    [string]$ListPrefix = "auto12",
-    [string]$ClientId = "31359c7f-bd7e-475c-86db-fdb8c937548e",
-    [string]$CustomersStpFile = "customers.stp",
-    [string]$OpportunitiesStpFile = "opportunities.stp"
-)
+# Prompt user for input parameters
+Write-Host "=== SharePoint CRM Lists Deployment Configuration ===" -ForegroundColor Cyan
+Write-Host ""
 
+# Get Site URL
+$SiteUrl = Read-Host "Enter SharePoint Site URL (e.g., https://tenant.sharepoint.com/sites/SiteName)"
+if ([string]::IsNullOrWhiteSpace($SiteUrl)) {
+    Write-Error "Site URL is required. Exiting."
+    exit 1
+}
+
+# Infer Tenant URL from Site URL
+try {
+    $uri = [System.Uri]$SiteUrl
+    $TenantUrl = "$($uri.Scheme)://$($uri.Host)"
+    Write-Host "Inferred Tenant URL: $TenantUrl" -ForegroundColor Gray
+} catch {
+    Write-Error "Invalid Site URL format. Please enter a valid URL."
+    exit 1
+}
+
+# Get List Prefix
+$ListPrefix = Read-Host "Enter list prefix (e.g., 'CRM', 'Sales', 'auto')"
+if ([string]::IsNullOrWhiteSpace($ListPrefix)) {
+    Write-Error "List prefix is required. Exiting."
+    exit 1
+}
+
+# Get ClientId with default
+$defaultClientId = "31359c7f-bd7e-475c-86db-fdb8c937548e"
+$ClientIdInput = Read-Host "Enter Client ID (press Enter for built-in PnP PowerShell app: $defaultClientId)"
+if ([string]::IsNullOrWhiteSpace($ClientIdInput)) {
+    $ClientId = $defaultClientId
+    Write-Host "Using built-in PnP PowerShell app registration" -ForegroundColor Yellow
+} else {
+    $ClientId = $ClientIdInput
+    Write-Host "Using custom Client ID: $ClientId" -ForegroundColor Yellow
+}
+
+# Set STP file names (keep these as constants)
+$CustomersStpFile = "customers.stp"
+$OpportunitiesStpFile = "opportunities.stp"
+
+Write-Host ""
 Write-Host "=== SharePoint CRM Lists Deployment (STP Version) ===" -ForegroundColor Cyan
 Write-Host "Site: $SiteUrl" -ForegroundColor Yellow
 Write-Host "Prefix: $ListPrefix" -ForegroundColor Yellow
 Write-Host ""
 
 # Import PnP PowerShell
+
 try {
     Import-Module PnP.PowerShell -Force
     Write-Host "✓ PnP PowerShell loaded" -ForegroundColor Green
@@ -72,12 +108,8 @@ function Deploy-StpFile {
         # Check if list already exists
         $existingList = Get-PnPList -Identity $ListName -ErrorAction SilentlyContinue
         if ($existingList) {
-            Write-Error "List '$ListName' already exists. Deployment failed to prevent conflicts."
-            Write-Host "  To proceed, either:" -ForegroundColor Red
-            Write-Host "    1. Delete the existing list manually" -ForegroundColor Red
-            Write-Host "    2. Use a different prefix parameter" -ForegroundColor Red
-            Write-Host "    3. Rename the existing list" -ForegroundColor Red
-            return $null
+            Write-Warning "  List '$ListName' already exists. Skipping deployment."
+            return $existingList
         }
         
         # For STP files, we need to use a different approach
@@ -129,21 +161,30 @@ function Add-CrmFields {
         if ($ListType -eq "Customers") {
             # Add customer-specific fields
             $fields = @(
-                @{Name="Company"; Type="Text"; DisplayName="Company Name"},
-                @{Name="ContactPerson"; Type="Text"; DisplayName="Contact Person"},
-                @{Name="Email"; Type="Text"; DisplayName="Email Address"},
-                @{Name="Phone"; Type="Text"; DisplayName="Phone Number"},
-                @{Name="Industry"; Type="Choice"; DisplayName="Industry"; Choices=@("Technology","Healthcare","Finance","Manufacturing","Other")},
-                @{Name="CustomerStatus"; Type="Choice"; DisplayName="Status"; Choices=@("Prospect","Active","Inactive","Lost")}
+                @{Name="CustomerName"; Type="Text"; DisplayName="Customer Name"},
+                @{Name="Website"; Type="URL"; DisplayName="Website"},
+                @{Name="NAICSSector"; Type="Text"; DisplayName="NAICS code"},
+                @{Name="CustomerStatus"; Type="Choice"; DisplayName="Status"; Choices=@("Prospect","Active","Inactive","Lost")},
+                @{Name="PrimaryContact"; Type="Text"; DisplayName="Primary Contact"},
+                @{Name="PrimaryContactTitle"; Type="Text"; DisplayName="Primary Contact Title"},
+                @{Name="AlternateContact"; Type="Text"; DisplayName="Alternate Contact"},
+                @{Name="AlternateContactTitle"; Type="Text"; DisplayName="Alternate Contact Title"},
+                @{Name="AlternateContact2"; Type="Text"; DisplayName="Alternate Contact 2"},
+                @{Name="AlternateContact2Title"; Type="Text"; DisplayName="Alternate Contact 2 Title"}
             )
         } elseif ($ListType -eq "Opportunities") {
             # Add opportunity-specific fields (excluding lookup field for now)
             $fields = @(
                 @{Name="OpportunityName"; Type="Text"; DisplayName="Opportunity Name"},
-                @{Name="Value"; Type="Currency"; DisplayName="Opportunity Value"},
-                @{Name="Stage"; Type="Choice"; DisplayName="Sales Stage"; Choices=@("Prospecting","Qualification","Proposal","Negotiation","Closed Won","Closed Lost")},
-                @{Name="Probability"; Type="Number"; DisplayName="Win Probability (%)"},
-                @{Name="CloseDate"; Type="DateTime"; DisplayName="Expected Close Date"}
+                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical")},
+                @{Name="OpportunityOwner"; Type="Text"; DisplayName="Opportunity Owner"},
+                @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout")},
+                @{Name="Amount"; Type="Currency"; DisplayName="Opportunity Value"},
+                @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High")}
+                @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"},
+                @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
+                @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"}
+
             )
         }
         
@@ -276,19 +317,6 @@ foreach ($stpFile in $stpFiles) {
         
         # Add CRM-specific fields
         Add-CrmFields -ListName $stpFile.ListName -ListType $stpFile.Name -CustomersListName $customersListName
-    } else {
-        Write-Error "Failed to deploy $($stpFile.Name) list. Stopping deployment."
-        Write-Host ""
-        Write-Host "✗ Deployment failed due to existing lists or other errors" -ForegroundColor Red
-        Write-Host "Please resolve the conflicts and try again." -ForegroundColor Red
-        
-        # Disconnect and exit immediately
-        try {
-            Disconnect-PnPOnline
-        } catch {
-            # Ignore disconnect errors
-        }
-        exit 1
     }
 }
 
@@ -326,7 +354,7 @@ Write-Host "Setting up lookup relationships..." -ForegroundColor Yellow
 
 if ($customersExists -and $opportunitiesExists) {
     # Create lookup from Opportunities to Customers
-    Add-LookupField -SourceListName $opportunitiesListName -TargetListName $customersListName -FieldName "CustomerID" -DisplayName "CustomerID" -ShowField "CustomerName"
+    Add-LookupField -SourceListName $opportunitiesListName -TargetListName $customersListName -FieldName "CustomerId" -DisplayName "CustomerId" -ShowField "CustomerName"
     
     Write-Host "✓ Lookup relationship created: $opportunitiesListName → $customersListName" -ForegroundColor Green
 } else {
@@ -339,11 +367,11 @@ Write-Host "Adding sample data..." -ForegroundColor Yellow
 
 if ($customersExists) {
     try {
-        # Add sample customers with corrected field names
+        # Add sample customers
         $sampleCustomers = @(
-            @{Title="ACME Corporation"; CustomerName="ACME Corporation"; PrimaryContact="John Smith"; PrimaryContactTitle="CEO"; AlternateContact="Jane Doe"; AlternateContactTitle="VP Sales"; AlternateContact2="Bob Wilson"; AlternateContact2Title="CTO"; Website="https://acme.com"; CustomerStatus="Active"},
-            @{Title="Global Industries"; CustomerName="Global Industries"; PrimaryContact="Sarah Johnson"; PrimaryContactTitle="Director"; AlternateContact="Mike Brown"; AlternateContactTitle="Manager"; AlternateContact2="Lisa Davis"; AlternateContact2Title="Coordinator"; Website="https://globalindustries.com"; CustomerStatus="Prospect"},
-            @{Title="Tech Solutions Inc"; CustomerName="Tech Solutions Inc"; PrimaryContact="David Lee"; PrimaryContactTitle="Founder"; AlternateContact="Emily Chen"; AlternateContactTitle="COO"; AlternateContact2="Alex Rodriguez"; AlternateContact2Title="CFO"; Website="https://techsolutions.com"; CustomerStatus="Active"}
+            @{Title="ACME Corporation"; CustomerName="ACME Corporation"; PrimaryContact="John Smith"; PrimaryContactTitle="CEO"; AlternateContact="Jane Doe"; AlternateTitle="VP Sales"; AlternateContact2="Bob Wilson"; AlternateContact2Title="CTO"; Website="https://acme.com"},
+            @{Title="Global Industries"; CustomerName="Global Industries"; PrimaryContact="Sarah Johnson"; PrimaryContactTitle="Director"; AlternateContact="Mike Brown"; AlternateTitle="Manager"; AlternateContact2="Lisa Davis"; AlternateContact2Title="Coordinator"; Website="https://globalindustries.com"},
+            @{Title="Tech Solutions Inc"; CustomerName="Tech Solutions Inc"; PrimaryContact="David Lee"; PrimaryContactTitle="Founder"; AlternateContact="Emily Chen"; AlternateTitle="COO"; AlternateContact2="Alex Rodriguez"; AlternateContact2Title="CFO"; Website="https://techsolutions.com"}
         )
         
         foreach ($customer in $sampleCustomers) {
@@ -376,7 +404,7 @@ if ($opportunitiesExists) {
                 $customer = $customers[$i]
                 
                 # Add customer lookup value
-                $opportunity["CustomerIDId"] = $customer.Id
+                $opportunity["CustomerIdId"] = $customer.Id
                 
                 $existingOpp = Get-PnPListItem -List $opportunitiesListName -Query "<View><Query><Where><Eq><FieldRef Name='OpportunityName'/><Value Type='Text'>$($opportunity.OpportunityName)</Value></Eq></Where></Query></View>" -ErrorAction SilentlyContinue
                 if (-not $existingOpp) {
