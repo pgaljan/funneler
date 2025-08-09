@@ -46,7 +46,6 @@ I've created a comprehensive PnP provisioning solution for your SharePoint CRM l
 
 ### **Azure AD App Registration** (For automated/service principal scenarios):
 ```powershell
-# Example with app registration
 Connect-PnPOnline -Url $SiteUrl -ClientId "your-app-id" -ClientSecret "your-secret" -AADDomain "yourtenant.onmicrosoft.com"
 ```
 
@@ -106,7 +105,6 @@ ProjectFolder/
 
 ### **For Enhanced Reporting:**
 ```powershell
-# Optional modules for advanced reporting
 Install-Module ImportExcel -Scope CurrentUser    # For Excel export
 Install-Module PSWriteHTML -Scope CurrentUser    # For enhanced HTML reports
 ```
@@ -165,13 +163,11 @@ Write-Host "Dependencies check completed!" -ForegroundColor Cyan
 
 ### **Issue 1: Execution Policy**
 ```powershell
-# Solution:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### **Issue 2: Module Import Errors**
 ```powershell
-# Solution:
 Uninstall-Module PnP.PowerShell -AllVersions -Force
 Install-Module PnP.PowerShell -Force -AllowClobber
 ```

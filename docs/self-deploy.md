@@ -51,6 +51,7 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 - Add "Website" column as HTML **case sensitive**
 
 **Opportunities**:
+- Hide Title Column
 - Change Stage to Choice:
 ```
 Lead Qualification
@@ -66,6 +67,12 @@ Active
 At Risk
 Critical
 ```
+- Change Probability to Choice:
+```
+Low
+Medium
+High
+```
 - Add "Customer Name" column as Lookup to the Opportunities Table Name column
 - Add "Comment Log" column as multi-line append changes
 
@@ -73,7 +80,7 @@ Critical
 When complete, your lists should be comprised of the following at minimum
 
 ##### Opportunities List
-- **Name** (Text) - Opportunity name
+- **Opportunity Name** (Text) - Opportunity name
 - **Status** (Choice) - On Track, At Risk, Critical
 - **Stage** (Choice) - Lead Qualification, Nurturing, Proposal, Negotiation, Project Execution, Closeout
 - **Amount** (Currency) - Deal value
@@ -86,7 +93,7 @@ When complete, your lists should be comprised of the following at minimum
 - **Comment Log** (Multiple Lines, Append) - Activity notes
 
 ##### Customers List
-- **Name** (Text) - Company name
+- **Customer Name** (Text) - Company name
 - **Primary Contact** (Text) - Main contact person
 - **Primary Contact Title** (Text) - Contact job title
 - **Alternate Contact** (Text) - Secondary contact
@@ -98,14 +105,15 @@ When complete, your lists should be comprised of the following at minimum
 #### (optional) apply body JSON format
 Leverage this as body JSON on the respective forms to clean up the look and feel for data entry.
 
+Opportunity body JSON
 ```json
 {
     "sections": [
         {
             "displayname": "Contact Information",
             "fields": [
-                "Name",
-                "Customer",
+                "Customer Name",
+                "Opportunity Name",
                 "Opportunity Owner"
             ]
         },
@@ -123,29 +131,29 @@ Leverage this as body JSON on the respective forms to clean up the look and feel
             "fields": [
                 "Amount",
                 "Probability",
-                "Close",
-                "Owner"
+                "Close"
             ]
         },
         {
             "displayname": "",
             "fields": [
-                "Comment Log"
+                "Comment Log",
+                "Title"
             ]
         }
     ]
 }
 
 ```
-Opportunity body JSON
 
+Customer body JSON
 ```json
 {
     "sections": [
         {
             "displayname": "Customer Details",
             "fields": [
-                "Name",
+                "Customer Name",
                 "Website"
             ]
         },
@@ -167,13 +175,14 @@ Opportunity body JSON
             "displayname": "Alternate 2 Contact",
             "fields": [
                 "Alternate Contact 2",
-                "Alternate Contact 2 Title"
+                "Alternate Contact 2 Title",
+                "Title"
             ]
         }
     ]
 }
 ```
-Customer body JSON
+
 
 #### Prep the lists for prod
 - Delete all rows
