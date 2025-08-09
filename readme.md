@@ -85,9 +85,6 @@ funneler/
 └── README.md
 ```
 
-## Usage Examples
-Roadmap - workflow gif
-
 ## Security & Permissions
 
 ### SharePoint Permissions
