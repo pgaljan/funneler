@@ -55,49 +55,21 @@ graph TD
 - **Excel 365** with Power Query support
 - **SharePoint Site** with list creation permissions
 
-## Quick Start
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/pgaljan/funneler.git
-cd funneler
-```
-
-### 2. Deploy SharePoint Lists
-
-This guide shows the manual steps to deploy this solution.  For automated deploymeds, please refer to the [admin-guide]()
-
-#### Option 2: Manual
-
-
-
-
-### 3. Configure Excel Dashboard
-1. Open `Sales Funnel SharePoint.xlsx`
-2. Update Settigns
-#### Excel Settings
-Update the following in the Settings sheet:
-
-| Setting | Description | Example |
-|---------|-------------|---------|
-| Site URL | SharePoint site URL | `https://company.sharepoint.com/sites/SalesFunnel/` |
-| Customers List | Sharepoint list name | `healthcareCustomers`|
-| Opportunities List | Sharepoint list name | `healthcareOpportunities`|
-| FY Start | Fiscal year start date | `2025-Jul-01` |
-| Probability Threshold | Minimum % for forecasting | `75%` |
-
-3. Refresh Power Query connections
-4. Save to shared location
+## Documentation
+- [admin guide](./docs/admin-guide.md): Automated deployment and security evaluation of the funneler solution
+- [self-deploy](./docs/self-deploy.md): Deployment guide for the citizen developer
+- [code-guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
+- [security](./docs/security.md): information about security
 
 ## Repository Structure
 
 ```
-sales-funnel-sharepoint/
+funneler/
 ├── Sales Funnel.xlsx       # Main Excel dashboard
 ├── templates/
 │   ├── opportunities.stp   # Sharepoint template
-│   ├── template.xlsx       # Excel template
-│   └── customers.stp       # Sharepoint template
+│   ├── customers.stp       # Sharepoint template
+│   └── template.xlsx       # Excel template
 ├── deployment/
 │   ├── SalesFunnel.xml     # (Roadmap) PnP provisioning template
 │   ├── deploy.ps1          # (Roadmap) Deployment script

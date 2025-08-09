@@ -1,7 +1,45 @@
 ### Security
 Data held in sales pipelines are considered to be highly confidential and sensitive.  The primary advantage of this approach is that most tenants have clear regulatory frameworks around Sharepoint and Office 365.  By deploying mindfully into Sharepoint, you may inherit the governance policies set by your organization.  Governance is even more simplified when the standard practice is to deploy each pipeline into its own dedicated site.  Read below for further, focused resources on security, data protection, compliance and best practices.
 
-#### SharePoint Security & Permissions
+
+## **Security Configuration Audit Script**
+**Comprehensive Security Checks:**
+
+### Site-Level Security:
+- External sharing capabilities
+- Site collection administrators
+- Permission groups and external members
+- Domain restrictions
+
+### List-Level Security:
+- Unique permissions analysis
+- Overly permissive settings detection
+- List configuration review
+- Sensitive field identification
+
+### Content & Data Audit:
+- Suspicious email domains
+- High-value opportunity detection
+- Data quality checks
+
+### Tenant-Level Security:
+- Tenant sharing policies
+- Default link types
+- Account matching requirements
+
+**Key Security Alerts:**
+- **Critical**: External sharing enabled, anonymous access, Everyone groups with permissions
+- **Warning**: Single administrators, external users in groups, unprotected sensitive data
+- **Info**: Good practices, usage statistics, configuration recommendations
+
+**Usage:**
+```powershell
+.\Audit-SharePointSecurity.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/crm" -ListPrefix "CRM" -ExportToCSV -OutputFile "SecurityAudit.html"
+```
+
+The solution provides enterprise-grade security monitoring and ensures your SharePoint CRM deployment follows security best practices while maintaining flexibility for different environments and naming conventions.
+
+#### Further Reading
 - **[SharePoint site permissions overview](https://docs.microsoft.com/en-us/sharepoint/sites/user-permissions-and-permission-levels)** - Understanding site vs list-level permissions
 - **[Manage site permissions in SharePoint](https://support.microsoft.com/en-us/office/manage-site-permissions-in-sharepoint-b36bb7c8-8c8d-4b1b-9d4f-3b3c3f2f7d8b)** - Best practices for RBAC implementation
 - **[SharePoint permission inheritance](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-permission-inheritance)** - How permissions flow from sites to lists

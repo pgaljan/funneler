@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2021/03/ProvisioningSchema">
+  <pnp:Preferences Generator="PnP.Framework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <pnp:Templates ID="CONTAINER-TEMPLATE">
+    <pnp:ProvisioningTemplate ID="CRM-LISTS-TEMPLATE" Version="1.0" BaseSiteTemplate="STS#3" Scope="RootSite">
+      <pnp:Lists>
+        <!-- Customers List -->
+        <pnp:ListInstance Title="{parameter:ListPrefix}Customers" 
+                         Description="Customer information and contact details" 
+                         DocumentTemplate="" 
+                         TemplateType="100" 
+                         Url="Lists/{parameter:ListPrefix}Customers" 
+                         MinorVersionLimit="0" 
+                         MaxVersionLimit="500" 
+                         DraftVersionVisibility="0" 
+                         TemplateFeatureId="00bfea71-de22-43b2-a848-c05709900100" 
+                         DefaultDisplayFormUrl="{parameter:ListPrefix}Customers/DispForm.aspx" 
+                         DefaultEditFormUrl="{parameter:ListPrefix}Customers/EditForm.aspx" 
+                         DefaultNewFormUrl="{parameter:ListPrefix}Customers/NewForm.aspx" 
+                         Direction="none" 
+                         DisableGridEditing="false" 
+                         EnableAssignToEmail="false" 
+                         EnableAttachments="true" 
+                         EnableDeployWithDependentList="true" 
+                         EnableFolderCreation="false" 
+                         EnableMinorVersions="false" 
+                         EnableModeration="false" 
+                         EnableVersioning="true" 
+                         ForceCheckout="false" 
+                         Hidden="false" 
+                         NoCrawl="false" 
+                         OnQuickLaunch="true" 
+                         RemoveExistingContentTypes="true">
+          
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+          
+          <pnp:Fields>
+            <Field ID="{fa564e0f-0c70-4ab9-b863-0177e6ddd247}" Type="Text" Name="CompanyName" StaticName="CompanyName" DisplayName="Company Name" Required="TRUE" MaxLength="255" />
+            <Field ID="{bc91a437-52e7-49e1-8c4e-4698904b2b6d}" Type="Text" Name="ContactFirstName" StaticName="ContactFirstName" DisplayName="Contact First Name" Required="FALSE" MaxLength="100" />
+            <Field ID="{071d076d-94aa-40d4-b22d-b15908fa72fe}" Type="Text" Name="ContactLastName" StaticName="ContactLastName" DisplayName="Contact Last Name" Required="FALSE" MaxLength="100" />
+            <Field ID="{943e7530-5e2b-4c02-8259-ccd93a9ecb18}" Type="Text" Name="Email" StaticName="Email" DisplayName="Email Address" Required="FALSE" MaxLength="255" />
+            <Field ID="{fdc3b2ed-5bf2-4835-a4bc-b885f3396a61}" Type="Text" Name="Phone" StaticName="Phone" DisplayName="Phone Number" Required="FALSE" MaxLength="50" />
+            <Field ID="{c3a92d97-2789-45ea-aa2b-54bece7bf416}" Type="Note" Name="Address" StaticName="Address" DisplayName="Address" Required="FALSE" RichText="FALSE" />
+            <Field ID="{6df9bd52-550e-4a30-bc31-a2dcc6b3f21a}" Type="Text" Name="City" StaticName="City" DisplayName="City" Required="FALSE" MaxLength="100" />
+            <Field ID="{d8e7f3c1-b5a3-4c8d-9f2e-1a3b5c7d9e2f}" Type="Text" Name="State" StaticName="State" DisplayName="State/Province" Required="FALSE" MaxLength="50" />
+            <Field ID="{2e4a6c8d-1b3f-4d9e-8c5a-7f9e1d3c5b7a}" Type="Text" Name="PostalCode" StaticName="PostalCode" DisplayName="Postal Code" Required="FALSE" MaxLength="20" />
+            <Field ID="{5b7d9f1e-3c8a-4e2b-9f6d-8e1c4a7b3d5f}" Type="Text" Name="Country" StaticName="Country" DisplayName="Country" Required="FALSE" MaxLength="100" />
+            <Field ID="{9e3f7c5b-8d1a-4f2e-b7c9-6e4d8a1f3c7b}" Type="Choice" Name="CustomerType" StaticName="CustomerType" DisplayName="Customer Type" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Prospect</CHOICE>
+                <CHOICE>Active</CHOICE>
+                <CHOICE>Inactive</CHOICE>
+                <CHOICE>VIP</CHOICE>
+              </CHOICES>
+              <Default>Prospect</Default>
+            </Field>
+            <Field ID="{7f1e5c9b-4a8d-2e6f-b3c7-9d5e1a8f4c2b}" Type="Currency" Name="AnnualRevenue" StaticName="AnnualRevenue" DisplayName="Annual Revenue" Required="FALSE" />
+            <Field ID="{3c7b9f5e-8d1a-4f2e-b6c9-7e4d8a1f3c5b}" Type="Note" Name="Notes" StaticName="Notes" DisplayName="Notes" Required="FALSE" RichText="TRUE" />
+          </pnp:Fields>
+          
+          <pnp:Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="All Items" DefaultView="TRUE" MobileView="FALSE" MobileDefaultView="FALSE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="CompanyName" />
+                <FieldRef Name="ContactFirstName" />
+                <FieldRef Name="ContactLastName" />
+                <FieldRef Name="Email" />
+                <FieldRef Name="Phone" />
+                <FieldRef Name="CustomerType" />
+                <FieldRef Name="Modified" />
+              </ViewFields>
+              <Query>
+                <OrderBy>
+                  <FieldRef Name="CompanyName" />
+                </OrderBy>
+              </Query>
+            </View>
+          </pnp:Views>
+        </pnp:ListInstance>
+
+        <!-- Opportunities List -->
+        <pnp:ListInstance Title="{parameter:ListPrefix}Opportunities" 
+                         Description="Sales opportunities and pipeline tracking" 
+                         DocumentTemplate="" 
+                         TemplateType="100" 
+                         Url="Lists/{parameter:ListPrefix}Opportunities" 
+                         MinorVersionLimit="0" 
+                         MaxVersionLimit="500" 
+                         DraftVersionVisibility="0" 
+                         TemplateFeatureId="00bfea71-de22-43b2-a848-c05709900100" 
+                         DefaultDisplayFormUrl="{parameter:ListPrefix}Opportunities/DispForm.aspx" 
+                         DefaultEditFormUrl="{parameter:ListPrefix}Opportunities/EditForm.aspx" 
+                         DefaultNewFormUrl="{parameter:ListPrefix}Opportunities/NewForm.aspx" 
+                         Direction="none" 
+                         DisableGridEditing="false" 
+                         EnableAssignToEmail="false" 
+                         EnableAttachments="true" 
+                         EnableDeployWithDependentList="true" 
+                         EnableFolderCreation="false" 
+                         EnableMinorVersions="false" 
+                         EnableModeration="false" 
+                         EnableVersioning="true" 
+                         ForceCheckout="false" 
+                         Hidden="false" 
+                         NoCrawl="false" 
+                         OnQuickLaunch="true" 
+                         RemoveExistingContentTypes="true">
+          
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+          
+          <pnp:Fields>
+            <Field ID="{8c4e7f2a-9d3b-4e1f-a7c5-6f8e2d4b9c1a}" Type="Text" Name="OpportunityName" StaticName="OpportunityName" DisplayName="Opportunity Name" Required="TRUE" MaxLength="255" />
+            <Field ID="{2f9e6c8a-5d1b-4e3f-9c7a-8e4d6f2b5c9a}" Type="Lookup" Name="CustomerLookup" StaticName="CustomerLookup" DisplayName="Customer" Required="TRUE" List="Lists/{parameter:ListPrefix}Customers" ShowField="CompanyName" />
+            <Field ID="{5a7c9f2e-8d4b-1e6f-b3c7-9e5d8a2f4c6b}" Type="Currency" Name="Value" StaticName="Value" DisplayName="Opportunity Value" Required="FALSE" />
+            <Field ID="{9c5e7f1a-4d8b-2e6f-a3c7-8e1d5a9f2c4b}" Type="Choice" Name="Stage" StaticName="Stage" DisplayName="Sales Stage" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Lead</CHOICE>
+                <CHOICE>Qualified</CHOICE>
+                <CHOICE>Proposal</CHOICE>
+                <CHOICE>Negotiation</CHOICE>
+                <CHOICE>Closed Won</CHOICE>
+                <CHOICE>Closed Lost</CHOICE>
+              </CHOICES>
+              <Default>Lead</Default>
+            </Field>
+            <Field ID="{7e3c9f5a-1d8b-4e2f-b6c7-5e9d1a8f3c4b}" Type="Number" Name="Probability" StaticName="Probability" DisplayName="Probability %" Required="FALSE" Min="0" Max="100" />
+            <Field ID="{3f7c1e9a-8d5b-2e4f-a6c7-9e8d2a5f1c3b}" Type="DateTime" Name="ExpectedCloseDate" StaticName="ExpectedCloseDate" DisplayName="Expected Close Date" Required="FALSE" Format="DateOnly" />
+            <Field ID="{6c9f3e7a-2d8b-5e1f-b4c7-8e6d3a9f5c2b}" Type="User" Name="Owner" StaticName="Owner" DisplayName="Opportunity Owner" Required="FALSE" />
+            <Field ID="{2e8f6c4a-9d1b-3e5f-a7c6-5e2d9a8f4c1b}" Type="Choice" Name="Source" StaticName="Source" DisplayName="Lead Source" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Website</CHOICE>
+                <CHOICE>Referral</CHOICE>
+                <CHOICE>Cold Call</CHOICE>
+                <CHOICE>Trade Show</CHOICE>
+                <CHOICE>Social Media</CHOICE>
+                <CHOICE>Email Campaign</CHOICE>
+                <CHOICE>Other</CHOICE>
+              </CHOICES>
+            </Field>
+            <Field ID="{8f4c2e6a-5d9b-1e3f-b7c4-2e8d6a5f9c3b}" Type="Note" Name="Description" StaticName="Description" DisplayName="Description" Required="FALSE" RichText="TRUE" />
+            <Field ID="{5c8f6e2a-9d3b-4e7f-a1c5-6e9d2a8f5c4b}" Type="Note" Name="NextSteps" StaticName="NextSteps" DisplayName="Next Steps" Required="FALSE" RichText="FALSE" />
+          </pnp:Fields>
+          
+          <pnp:Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="All Items" DefaultView="TRUE" MobileView="FALSE" MobileDefaultView="FALSE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="OpportunityName" />
+                <FieldRef Name="CustomerLookup" />
+                <FieldRef Name="Value" />
+                <FieldRef Name="Stage" />
+                <FieldRef Name="Probability" />
+                <FieldRef Name="ExpectedCloseDate" />
+                <FieldRef Name="Owner" />
+                <FieldRef Name="Modified" />
+              </ViewFields>
+              <Query>
+                <OrderBy>
+                  <FieldRef Name="ExpectedCloseDate" />
+                </OrderBy>
+              </Query>
+            </View>
+            
+            <View BaseViewID="2" Type="HTML" WebPartZoneID="Main" DisplayName="Open Opportunities" DefaultView="FALSE" MobileView="FALSE" MobileDefaultView="FALSE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="OpenOpportunities.aspx">
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="OpportunityName" />
+                <FieldRef Name="CustomerLookup" />
+                <FieldRef Name="Value" />
+                <FieldRef Name="Stage" />
+                <FieldRef Name="Probability" />
+                <FieldRef Name="ExpectedCloseDate" />
+                <FieldRef Name="Owner" />
+              </ViewFields>
+              <Query>
+                <Where>
+                  <And>
+                    <Neq>
+                      <FieldRef Name="Stage" />
+                      <Value Type="Choice">Closed Won</Value>
+                    </Neq>
+                    <Neq>
+                      <FieldRef Name="Stage" />
+                      <Value Type="Choice">Closed Lost</Value>
+                    </Neq>
+                  </And>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="ExpectedCloseDate" />
+                </OrderBy>
+              </Query>
+            </View>
+          </pnp:Views>
+        </pnp:ListInstance>
+      </pnp:Lists>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>

@@ -41,7 +41,7 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 #### List settigs changes
 
 - In the Opportunities list, go to list settings (gear icon top left)
-- Turn on versioning.  Set the number of revisions this will carry.  **Note: comments will "roll off" after the number of retained versions are exceeeded.  Starting with 500 seems safe
+- Turn on versioning.  Set the number of revisions this will carry.  **Note: comments will "roll off" after the number of retained versions are exceeeded.  The automated deployment starts with 500 revisions retained.
 
 #### Column additions & changes
 
