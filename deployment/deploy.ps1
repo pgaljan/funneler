@@ -147,6 +147,17 @@ function Deploy-StpFile {
     }
 }
 
+# Make Title field not required
+try {
+    $titleField = Get-PnPField -List $ListName -Identity "Title" -ErrorAction SilentlyContinue
+    if ($titleField) {
+        Set-PnPField -List $ListName -Identity "Title" -Values @{Required=$false}
+        Write-Host "    ✓ Set Title field to not required" -ForegroundColor Gray
+    }
+} catch {
+    Write-Warning "    Could not modify Title field requirement: $($_.Exception.Message)"
+}
+
 # Function to add common CRM fields to lists
 function Add-CrmFields {
     param(
@@ -161,11 +172,11 @@ function Add-CrmFields {
         if ($ListType -eq "Customers") {
             # Add customer-specific fields
             $fields = @(
-                @{Name="CustomerName"; Type="Text"; DisplayName="Customer Name"},
+                @{Name="CustomerName"; Type="Text"; DisplayName="Customer Name"; Required=$true},
                 @{Name="Website"; Type="URL"; DisplayName="Website"},
                 @{Name="NAICSSector"; Type="Text"; DisplayName="NAICS code"},
                 @{Name="CustomerStatus"; Type="Choice"; DisplayName="Status"; Choices=@("Prospect","Active","Inactive","Lost")},
-                @{Name="PrimaryContact"; Type="Text"; DisplayName="Primary Contact"},
+                @{Name="PrimaryContact"; Type="Text"; DisplayName="Primary Contact"; Required=$true},
                 @{Name="PrimaryContactTitle"; Type="Text"; DisplayName="Primary Contact Title"},
                 @{Name="AlternateContact"; Type="Text"; DisplayName="Alternate Contact"},
                 @{Name="AlternateContactTitle"; Type="Text"; DisplayName="Alternate Contact Title"},
@@ -175,13 +186,13 @@ function Add-CrmFields {
         } elseif ($ListType -eq "Opportunities") {
             # Add opportunity-specific fields (excluding lookup field for now)
             $fields = @(
-                @{Name="OpportunityName"; Type="Text"; DisplayName="Opportunity Name"},
-                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical")},
+                @{Name="OpportunityName"; Type="Text"; DisplayName="Opportunity Name"; Required=$true},
+                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical"; Required=$true)},
                 @{Name="OpportunityOwner"; Type="Text"; DisplayName="Opportunity Owner"},
-                @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout")},
-                @{Name="Amount"; Type="Currency"; DisplayName="Opportunity Value"},
-                @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High")}
-                @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"},
+                @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout; Required=$true")},
+                @{Name="Amount"; Type="Currency"; DisplayName="Opportunity Value"; Required=$true},
+                @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High"; Required=$true)}
+                @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"; Required=$true},
                 @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
                 @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"}
 
