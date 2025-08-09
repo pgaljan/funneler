@@ -5,11 +5,14 @@
 [![Excel](https://img.shields.io/badge/Excel-365-green.svg)](https://www.microsoft.com/excel)
 [![Power Query](https://img.shields.io/badge/Power%20Query-Enabled-orange.svg)](https://powerquery.microsoft.com/)
 
-> A simple Sharepoint-based sales pipeline management system with on-demand integration with Excel for visualization.
+> A simple Sharepoint-based sales pipeline management system with on-demand integration with Excel for visualization.  
+
 
 ## Features
 
-- **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel
+- **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
+- **Full IAM Awarements** - Use regular M365 features for user tagging and commenting
+- **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel and PBI (coming soon)
 - **SharePoint Integration** - On-demand uni-directional sync with user-defined SharePoint lists
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
 - **Milestone Tracking** - Next steps and deadline management

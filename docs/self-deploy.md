@@ -21,8 +21,6 @@ https://**yourPortalName**.sharepoint.com/_layouts/15/sharepoint.aspx?&login_hin
 
 #### Locate or create a Sharepoint Team Site 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDAvXW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDAvXW) for more information about creating SharePoint sites.
 
 #### Create lists from [template.xlsx](../templates/template.xlsx)
@@ -31,9 +29,13 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 
 1. navigate to the opportunities worksheet
 2. Select any cell in the table and select the table design tab > Export > Export Table to Sharepoint list
+
 ![Export Table](./images/export.png)
+
 3. Specify the tenant, site, and list names
+
 ![List Specification](./images/listspec.png)
+
 4. Repeat the process with customers worksheet
 
 **Note the sharepoint list names in this process.  You will need these for the excel file to locate the proper lists.
@@ -45,11 +47,10 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 
 #### Column additions & changes
 
-Customers:
+**Customers**:
 - Add "Website" column as HTML **case sensitive**
-- (optional) apply body JSON format
 
-Opportunities:
+**Opportunities**:
 - Change Stage to Choice:
 ```
 Lead Qualification
@@ -70,6 +71,7 @@ Critical
 
 #### Verify List Setup
 When complete, your lists should be comprised of the following at minimum
+
 ##### Opportunities List
 - **Name** (Text) - Opportunity name
 - **Status** (Choice) - On Track, At Risk, Critical
