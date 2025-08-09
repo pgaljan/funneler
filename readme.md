@@ -36,17 +36,11 @@
 
 ```mermaid
 graph TD
-    A[Excel Dashboard] --> B[Power Query]
-    B --> C[SharePoint Lists]
-    C --> D[Opportunities List]
-    C --> E[Customers List]
-    D --> F[On Demand Sync]
-    E --> F
-    F --> A
-    
-    G[User Input] --> C
-    H[Power Automate] --> C
-    I[Teams Integration] --> C
+Opportunities --> PowerQuery[Power Query] 
+Customers --> PowerQuery
+PowerQuery --> Excel[Excel/PBI]
+Excel -.->|hyperlink| Opportunities
+Excel -.->|hyperlink| Customers
 ```
 
 ## Requirements
@@ -114,12 +108,9 @@ Roadmap - workflow gif
 - comment log disappears from excel power query, but remains in list (versioning limitation)
 
 ## Roadmap
-- Configurable list names
-- List View linking
-- Sharepoint deployment template and powershell
-- Full documentation
 - M code refactor to resolve commment log issue
 - PBI dashboard
 - Expand customer metadata
 - Recurring revenue setup
-- User-defined phases
+- User-defined Phase
+- User defined Status
