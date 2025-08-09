@@ -13,7 +13,7 @@
 
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
 - **Flexible Deployment Methods** - Deploy manually using the [citizen developer](./docs/self-deploy.md) docs or the included PowerShell 7 scripts
-- **Full IAM Awarements** - Use regular M365 features for user tagging and commenting
+- **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel and PBI (coming soon)
 - **SharePoint Integration** - On-demand uni-directional sync with user-defined SharePoint lists
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
