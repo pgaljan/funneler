@@ -1,45 +1,50 @@
-# Prompt user for input parameters
-Write-Host "=== SharePoint CRM Lists Deployment Configuration ===" -ForegroundColor Cyan
-Write-Host ""
+param(
+    [string]$SiteUrl,
+    [string]$ListPrefix,
+    [string]$ClientId = "31359c7f-bd7e-475c-86db-fdb8c937548e",
+    [string]$CustomersStpFile = "customers.stp",
+    [string]$OpportunitiesStpFile = "opportunities.stp"
+)
 
-# Get Site URL
-$SiteUrl = Read-Host "Enter SharePoint Site URL (e.g., https://tenant.sharepoint.com/sites/SiteName)"
+# If parameters not provided via command line, prompt for them
 if ([string]::IsNullOrWhiteSpace($SiteUrl)) {
-    Write-Error "Site URL is required. Exiting."
-    exit 1
+    Write-Host "=== SharePoint CRM Lists Deployment Configuration ===" -ForegroundColor Cyan
+    Write-Host ""
+    
+    $SiteUrl = Read-Host "Enter SharePoint Site URL (e.g., https://tenant.sharepoint.com/sites/SiteName)"
+    if ([string]::IsNullOrWhiteSpace($SiteUrl)) {
+        Write-Error "Site URL is required. Exiting."
+        exit 1
+    }
+}
+
+if ([string]::IsNullOrWhiteSpace($ListPrefix)) {
+    if (-not $PSBoundParameters.ContainsKey('ListPrefix')) {
+        $ListPrefix = Read-Host "Enter list prefix (e.g., 'CRM', 'Sales', 'auto')"
+        if ([string]::IsNullOrWhiteSpace($ListPrefix)) {
+            Write-Error "List prefix is required. Exiting."
+            exit 1
+        }
+    }
+}
+
+# Allow override of default ClientId if not specified via command line
+if (-not $PSBoundParameters.ContainsKey('ClientId')) {
+    $defaultClientId = "31359c7f-bd7e-475c-86db-fdb8c937548e"
+    $ClientIdInput = Read-Host "Enter Client ID (press Enter for built-in PnP PowerShell app: $defaultClientId)"
+    if (-not [string]::IsNullOrWhiteSpace($ClientIdInput)) {
+        $ClientId = $ClientIdInput
+    }
 }
 
 # Infer Tenant URL from Site URL
 try {
     $uri = [System.Uri]$SiteUrl
     $TenantUrl = "$($uri.Scheme)://$($uri.Host)"
-    Write-Host "Inferred Tenant URL: $TenantUrl" -ForegroundColor Gray
 } catch {
     Write-Error "Invalid Site URL format. Please enter a valid URL."
     exit 1
 }
-
-# Get List Prefix
-$ListPrefix = Read-Host "Enter list prefix (e.g., 'CRM', 'Sales', 'auto')"
-if ([string]::IsNullOrWhiteSpace($ListPrefix)) {
-    Write-Error "List prefix is required. Exiting."
-    exit 1
-}
-
-# Get ClientId with default
-$defaultClientId = "31359c7f-bd7e-475c-86db-fdb8c937548e"
-$ClientIdInput = Read-Host "Enter Client ID (press Enter for built-in PnP PowerShell app: $defaultClientId)"
-if ([string]::IsNullOrWhiteSpace($ClientIdInput)) {
-    $ClientId = $defaultClientId
-    Write-Host "Using built-in PnP PowerShell app registration" -ForegroundColor Yellow
-} else {
-    $ClientId = $ClientIdInput
-    Write-Host "Using custom Client ID: $ClientId" -ForegroundColor Yellow
-}
-
-# Set STP file names (keep these as constants)
-$CustomersStpFile = "customers.stp"
-$OpportunitiesStpFile = "opportunities.stp"
 
 Write-Host ""
 Write-Host "=== SharePoint CRM Lists Deployment (STP Version) ===" -ForegroundColor Cyan

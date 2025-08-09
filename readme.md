@@ -6,7 +6,7 @@
 [![Power Query](https://img.shields.io/badge/Power%20Query-Enabled-orange.svg)](https://powerquery.microsoft.com/)
 [![PowerShell 7 Required](https://img.shields.io/badge/PowerShell%207-Required-red.svg)](https://github.com/PowerShell/PowerShell)
 
-> A Sharepoint learning kit comprised of a simple, secure sales pipeline management system with on-demand integration with Excel for visualization, exercising skills with excel formulas, data visualization and conditional formatting, array handling, power query, and powershell.
+> A Sharepoint learning kit comprised of a simple, secure sales pipeline management system with on-demand integration with Excel for visualization, exercising skills with excel formulas, data visualization and conditional formatting, array handling, power query, and powershell leveraging PnP.
 
 
 ## Features
