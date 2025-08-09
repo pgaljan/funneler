@@ -147,16 +147,6 @@ function Deploy-StpFile {
     }
 }
 
-# Make Title field not required
-try {
-    $titleField = Get-PnPField -List $ListName -Identity "Title" -ErrorAction SilentlyContinue
-    if ($titleField) {
-        Set-PnPField -List $ListName -Identity "Title" -Values @{Required=$false}
-        Write-Host "    ✓ Set Title field to not required" -ForegroundColor Gray
-    }
-} catch {
-    Write-Warning "    Could not modify Title field requirement: $($_.Exception.Message)"
-}
 
 # Function to add common CRM fields to lists
 function Add-CrmFields {
@@ -187,11 +177,11 @@ function Add-CrmFields {
             # Add opportunity-specific fields (excluding lookup field for now)
             $fields = @(
                 @{Name="OpportunityName"; Type="Text"; DisplayName="Opportunity Name"; Required=$true},
-                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical"; Required=$true)},
+                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical"); Required=$true},
                 @{Name="OpportunityOwner"; Type="Text"; DisplayName="Opportunity Owner"},
-                @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout; Required=$true")},
+                @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout"); Required=$true},
                 @{Name="Amount"; Type="Currency"; DisplayName="Opportunity Value"; Required=$true},
-                @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High"; Required=$true)}
+                @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High"); Required=$true},
                 @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"; Required=$true},
                 @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
                 @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"}
