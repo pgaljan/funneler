@@ -65,17 +65,18 @@ funneler/
 │   ├── customers.stp       # Sharepoint template
 │   └── template.xlsx       # Excel template
 ├── deployment/
-│   ├── SalesFunnel.xml     # (Roadmap) PnP provisioning template
-│   ├── deploy.ps1          # (Roadmap) Deployment script
-│   └── permissions.ps1     # (Roadmap) Security configuration
+│   ├── SalesFunnel.xml     # PnP provisioning template
+│   ├── deploy.ps1          # Deployment script
+│   └── permissions.ps1     # Security configuration
 ├── power-query/
-│   ├── opportunities.m     # (Roadmap) Opportunities data source
-│   └── customers.m         # (Roadmap) Customers data source
+│   ├── opportunities.m     # Opportunities data source
+│   └── customers.m         # Customers data source
 ├── docs/
 │   ├── images/
-│   ├── user-guide.md       # (Roadmap)
+│   ├── admin-guide.md      # Automated deployment
+│   ├── security.md         # Security assessment script, considerations & reading
 │   ├── code-guide.md       # m code and excel formulas
-│   └── troubleshooting.md  # (Roadmap)
+│   └── self-deploy.md      # Citizen developer guide for deployment
 └── README.md
 ```
 
