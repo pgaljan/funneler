@@ -1,0 +1,34 @@
+{
+    "sections": [
+        {
+            "displayname": "Basics",
+            "fields": [
+                "Opportunity Owner",
+                "CustomerId",
+                "Title"
+            ]
+        },
+        {
+            "displayname": "Status",
+            "fields": [
+                "Status",
+                "Stage",
+                "Next Milestone",
+                "Next Deadline or Milestone"
+            ]
+        },
+        {
+            "displayname": "Financial Details",
+            "fields": []
+        },
+        {
+            "displayname": "",
+            "fields": [
+                "Opportunity Name",
+                "Opportunity Value",
+                "Win Probability",
+                "Expected Close Date"
+            ]
+        }
+    ]
+}
