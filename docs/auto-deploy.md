@@ -67,9 +67,13 @@ Populate list with sample data
 ```powershell
 .\Add-Comment-Log.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
+## List fine tuning:
+System should be functional, but the following are useful for production deployments:
+* Calendar View in Lists
+* Pill body colors for Status & Stage
 
-## Apply Form Body JSON
-I've been unsuccessful getting the body JSON to be applied via PnP because the `CustomFormatterBody` isn't allowed in PnP powershell.  Here's the JSON body to group the fields appropriately and consistently:
+### Form Body JSON
+*I've been unsuccessful getting the body JSON to be applied via PnP because the `CustomFormatterBody` isn't allowed in PnP powershell.  Here's the JSON body to group the fields appropriately and consistently:
 Opportunity
 ```json
 {

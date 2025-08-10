@@ -44,7 +44,7 @@ https://contoso.sharepoint.com/sites/Sales/Lists/crmCustomers/
 
 2. Excel Configuration
 
-Open Sales Funnel Sharepoint and navigate to **Settings**
+Open `Sales Funnel Sharepoint.xlsx` and navigate to **Settings**
 
 ![List Specification](./docs/images/listSelect.png)
 >Specify the SiteURL and prefix
@@ -52,6 +52,9 @@ Open Sales Funnel Sharepoint and navigate to **Settings**
 3. Refresh and test links
 
 ![Refresh](./docs/images/refresh.png)
+
+4. (Optional) Configure refresh
+Refresh settings are the defaults for Excel.  If using in production, consider adding a refresh on open, and clearing data on refresh.
 
 
 ## Documentation
