@@ -83,21 +83,6 @@ The spreadsheet uses 21 unique Excel functions:
 | MAX | Low | Maximum value | Excel 1.0 (1987) - Core function since inception |
 | MIN | Low | Minimum value | Excel 1.0 (1987) - Core function since inception |
 
-## Key Observations:
-
-### **Revolutionary Period (2019-2020)**
-The introduction of Dynamic Array functions in December 2019 represents the most significant Excel function advancement in decades. Functions like XLOOKUP, UNIQUE, FILTER, SORTBY, and LET fundamentally changed how Excel handles data analysis and lookup operations.
-
-### **Foundation Era (1987-1992)**
-Most basic mathematical, text, and date functions (SUM, COUNT, IF, YEAR, MONTH, RIGHT, etc.) were included in Excel's earliest versions, establishing the core functionality that users still rely on today.
-
-### **Feature Expansion (1997-2016)**
-Functions like HYPERLINK and SUBTOTAL were added during Excel's growth period, while SWITCH represents more recent logical function improvements.
-
-### **Compatibility Notes:**
-- **XLOOKUP and Dynamic Array functions** are only available in Excel for Office 365, Excel 2021, and Excel for the web
-- **Older functions** (SUM, COUNT, IF, etc.) work across all Excel versions
-- **TRANSPOSE** has been enhanced over time but maintains backward compatibility
 
 ### Named Ranges Inventory
 

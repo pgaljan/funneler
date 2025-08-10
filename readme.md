@@ -31,6 +31,12 @@ Project builders will exercise skills with:
 - **Hyperlinked Navigation** - Direct links to SharePoint records
 - **Multi-user Collaboration** - SharePoint-backed team workflows
 
+## Documentation
+- [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
+- [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
+- [Code Guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
+- [security Guide](./docs/security.md): information about security and the included scripts
+
 ## Architecture
 
 ```mermaid
@@ -68,36 +74,8 @@ Excel -.->|hyperlink| Customers
 - **Excel 365** with Power Query support
 - **SharePoint Site** with list creation permissions
 
-## Documentation
-- [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
-- [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
-- [code-guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
-- [security](./docs/security.md): information about security and the included
 
-## Repository Structure
 
-```
-funneler/
-├── Sales Funnel.xlsx       # Main Excel dashboard
-├── templates/
-│   ├── opportunities.stp   # Sharepoint template
-│   ├── customers.stp       # Sharepoint template
-│   └── template.xlsx       # Excel template
-├── deployment/
-│   ├── SalesFunnel.xml     # PnP provisioning template
-│   ├── deploy.ps1          # Deployment script
-│   └── permissions.ps1     # Security configuration
-├── power-query/
-│   ├── opportunities.m     # Opportunities data source
-│   └── customers.m         # Customers data source
-├── docs/
-│   ├── images/
-│   ├── admin-guide.md      # Automated deployment
-│   ├── security.md         # Security assessment script, considerations & reading
-│   ├── code-guide.md       # m code and excel formulas
-│   └── self-deploy.md      # Citizen developer guide for deployment
-└── README.md
-```
 
 ## Security & Permissions
 
