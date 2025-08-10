@@ -1,41 +1,22 @@
-### Security
-Data held in sales pipelines are considered to be highly confidential and sensitive.  The primary advantage of this approach is that most tenants have clear regulatory frameworks around Sharepoint and Office 365.  By deploying mindfully into Sharepoint, you may inherit the governance policies set by your organization.  Governance is even more simplified when the standard practice is to deploy each pipeline into its own dedicated site.  Read below for further, focused resources on security, data protection, compliance and best practices.
+### Security & Governance
+Data held in sales pipelines are considered to be highly confidential and sensitive.  The primary advantage of this funneler approach in production is that most tenants have clear regulatory frameworks around Sharepoint and Office 365.  By deploying mindfully into Sharepoint, users inherit the governance policies and DLP features implemented in M365.  Governance is even more simplified when the standard practice is to deploy each pipeline into its own dedicated site.  Additionally, the Security Assessemnt Framework can be run on deployment and periodically between deployments to detect drift and ensure that sensitive data are protected and minimized.
 
 
-## **Security Configuration Audit Script**
-**Comprehensive Security Checks:**
-
-### Site-Level Security:
-- External sharing capabilities
-- Site collection administrators
-- Permission groups and external members
-- Domain restrictions
-
-### List-Level Security:
-- Unique permissions analysis
-- Overly permissive settings detection
-- List configuration review
-- Sensitive field identification
-
-### Content & Data Audit:
-- Suspicious email domains
-- High-value opportunity detection
-- Data quality checks
-
-### Tenant-Level Security:
-- Tenant sharing policies
-- Default link types
-- Account matching requirements
-
-**Key Security Alerts:**
-- **Critical**: External sharing enabled, anonymous access, Everyone groups with permissions
-- **Warning**: Single administrators, external users in groups, unprotected sensitive data
-- **Info**: Good practices, usage statistics, configuration recommendations
+## Security Assessment Framework
 
 **Usage:**
 ```powershell
 .\Audit-SharePointSecurity.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/crm" -ListPrefix "CRM" -ExportToCSV -OutputFile "SecurityAudit.html"
 ```
+> This script may be run periodically via PowerAutomate or alternate orchestration to detect and alert on drift.
+
+The assessment framework is implemented in `Audit-List-Security.ps1`. It examines site-level configurations including external sharing capabilities, site collection administrator management, and permission group oversight to identify critical vulnerabilities such as unrestricted external access, anonymous sharing, and overly broad security groups. At the list level, the evaluation focuses on unique permissions analysis, Full Control permission detection, versioning settings, content approval workflows, and sensitive field identification to ensure appropriate data protection and access controls are maintained across all content repositories.
+The security audit employs a weighted risk scoring system that categorizes findings into actionable priority levels, with critical issues including external sharing misconfigurations, anonymous access enablement, and Everyone group permissions requiring immediate remediation. Warning-level findings such as single administrator configurations, external users in security groups, and unprotected sensitive data require prompt attention, while informational findings highlight opportunities for security enhancement through best practice implementation. 
+
+## Further Steps
+Effective SharePoint security requires ongoing assessment and refinement, with regular monthly audits recommended to identify configuration drift and validate existing security controls. The systematic evaluation of tenant-wide policies, including default sharing configurations, authentication requirements, and data loss prevention settings, ensures consistent security application across the entire SharePoint environment. This continuous monitoring approach, combined with detailed documentation of security configurations and findings, enables organizations to maintain robust security postures while supporting business productivity and demonstrating compliance with regulatory requirements.
+
+
 
 The solution provides enterprise-grade security monitoring and ensures your SharePoint CRM deployment follows security best practices while maintaining flexibility for different environments and naming conventions.
 
