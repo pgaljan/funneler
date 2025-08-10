@@ -53,30 +53,51 @@ in
 
 The spreadsheet uses 21 unique Excel functions:
 
-| Function | Usage | Description |
-|----------|-------|-------------|
-| XLOOKUP | High | Advanced lookup function |
-| HYPERLINK | High | Creates clickable links |
-| SUBTOTAL | Medium | Subtotal calculations for dynamic filtering |
-| UNIQUE | Medium | Returns unique values |
-| TRANSPOSE | Medium | Transposes arrays |
-| FILTER | Medium | Filters data arrays |
-| SORTBY | Medium | Sorts data by criteria |
-| IF | High | Conditional logic |
-| MONTH | Medium | Extracts month from date |
-| YEAR | Medium | Extracts year from date |
-| RIGHT | Medium | Text extraction |
-| CEILING | Low | Rounds up to nearest integer |
-| ROUNDUP | Low | Rounds numbers up |
-| LET | Low | Defines variables in formulas |
-| SWITCH | Low | Multiple condition evaluation |
-| TEXT | Low | Text formatting |
-| CONCATENATE | Low | Text concatenation |
-| SUM | Low | Summation |
-| COUNT | Low | Count functions |
-| MAX | Low | Maximum value |
-| MIN | Low | Minimum value |
- 
+# Excel Functions Introduction Timeline
+
+| Function | Usage | Description | When Introduced |
+|----------|-------|-------------|-----------------|
+| **Dynamic Array Functions (Office 365/2021)** |
+| XLOOKUP | High | Advanced lookup function | 2020 (Excel for Office 365 version 2001/Build 12430.20184) |
+| UNIQUE | Medium | Returns unique values | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| FILTER | Medium | Filters data arrays | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| SORTBY | Medium | Sorts data by criteria | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| LET | Low | Defines variables in formulas | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| **Modern Functions (Excel 2007-2019)** |
+| SWITCH | Low | Multiple condition evaluation | Excel 2016 (2015) |
+| **Classic Functions (Excel 97-2007)** |
+| HYPERLINK | High | Creates clickable links | Excel 97 (1997) |
+| SUBTOTAL | Medium | Subtotal calculations for dynamic filtering | Excel 97 (1997) |
+| TRANSPOSE | Medium | Transposes arrays | Excel 1.0 (1987) - Available since early Excel versions |
+| **Legacy Functions (Excel 1.0-95)** |
+| IF | High | Conditional logic | Excel 1.0 (1987) - Core function since inception |
+| MONTH | Medium | Extracts month from date | Excel 1.0 (1987) - Core date function |
+| YEAR | Medium | Extracts year from date | Excel 1.0 (1987) - Core date function |
+| RIGHT | Medium | Text extraction | Excel 1.0 (1987) - Core text function |
+| CEILING | Low | Rounds up to nearest integer | Excel 1.0 (1987) - Core math function |
+| ROUNDUP | Low | Rounds numbers up | Excel 1.0 (1987) - Core math function |
+| TEXT | Low | Text formatting | Excel 1.0 (1987) - Core text function |
+| CONCATENATE | Low | Text concatenation | Excel 4.0 (1992) |
+| SUM | High | Summation | Excel 1.0 (1987) - Core function since inception |
+| COUNT | Low | Count functions | Excel 1.0 (1987) - Core function since inception |
+| MAX | Low | Maximum value | Excel 1.0 (1987) - Core function since inception |
+| MIN | Low | Minimum value | Excel 1.0 (1987) - Core function since inception |
+
+## Key Observations:
+
+### **Revolutionary Period (2019-2020)**
+The introduction of Dynamic Array functions in December 2019 represents the most significant Excel function advancement in decades. Functions like XLOOKUP, UNIQUE, FILTER, SORTBY, and LET fundamentally changed how Excel handles data analysis and lookup operations.
+
+### **Foundation Era (1987-1992)**
+Most basic mathematical, text, and date functions (SUM, COUNT, IF, YEAR, MONTH, RIGHT, etc.) were included in Excel's earliest versions, establishing the core functionality that users still rely on today.
+
+### **Feature Expansion (1997-2016)**
+Functions like HYPERLINK and SUBTOTAL were added during Excel's growth period, while SWITCH represents more recent logical function improvements.
+
+### **Compatibility Notes:**
+- **XLOOKUP and Dynamic Array functions** are only available in Excel for Office 365, Excel 2021, and Excel for the web
+- **Older functions** (SUM, COUNT, IF, etc.) work across all Excel versions
+- **TRANSPOSE** has been enhanced over time but maintains backward compatibility
 
 ### Named Ranges Inventory
 
