@@ -18,7 +18,7 @@ Project builders will exercise skills with:
 
 ## Operator Features
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy with minimal privileges using the [citizen developer](./docs/manual-deploy.md) docs or leverage the [automated deployment guide](./docs/auto-deploy.md)
+- **Flexible Deployment Methods** - Deploy manually as a [citizen developer](./docs/manual-deploy.md) with [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
 
@@ -31,6 +31,29 @@ Project builders will exercise skills with:
 - **Hyperlinked Navigation** - Direct links to SharePoint records
 - **Multi-user Collaboration** - SharePoint-backed team workflows
 
+# Quick Start (Excel)
+1. Identify the Site URL and List Prefix of your pipeline
+
+```
+https://contoso.sharepoint.com/sites/Sales/Lists/crmCustomers/
+```
+> tenant: **contoso**; 
+> site: **Sales**;
+> prefix: **crm**
+
+
+2. Excel Configuration
+
+Open Sales Funnel Sharepoint and navigate to **Settings**
+
+![List Specification](./docs/images/listSelect.png)
+>Specify the SiteURL and prefix
+
+3. Refresh and test links
+
+![Refresh](./docs/images/refresh.png)
+
+
 ## Documentation
 - [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
 - [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
@@ -41,7 +64,9 @@ Project builders will exercise skills with:
 
 ```mermaid
 graph TD
+
 Opportunities --> PowerQuery[Power Query] 
+Customers -.->|1:Many| Opportunities 
 Customers --> PowerQuery
 PowerQuery --> Excel[Excel/PBI]
 Excel -.->|hyperlink| Opportunities
@@ -73,6 +98,8 @@ Excel -.->|hyperlink| Customers
 - **Microsoft 365** with SharePoint Online
 - **Excel 365** with Power Query support
 - **SharePoint Site** with list creation permissions
+
+
 
 
 
