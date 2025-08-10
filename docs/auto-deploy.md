@@ -81,8 +81,11 @@ Opportunity
         {
             "displayname": "Basics",
             "fields": [
+                "Opportunity Name",
                 "Opportunity Owner",
-                "CustomerId"
+                "CustomerId",
+                "Expected Close Date",
+                "Title"
             ]
         },
         {
@@ -96,15 +99,14 @@ Opportunity
         },
         {
             "displayname": "Financial Details",
-            "fields": []
+                "Opportunity Value",
+                "Win Probability",
+                "Comment Log"
         },
         {
             "displayname": "",
             "fields": [
-                "Opportunity Name",
-                "Opportunity Value",
-                "Win Probability",
-                "Expected Close Date"
+
             ]
         }
     ]
