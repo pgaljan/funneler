@@ -61,7 +61,7 @@ Refresh settings are the defaults for Excel.  If using in production, consider a
 - [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
 - [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
 - [Code Guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
-- [security Guide](./docs/security.md): information about security and the included scripts
+- [Security Guide](./docs/security.md): information about security and the included scripts
 
 ## Architecture
 
@@ -101,10 +101,6 @@ Excel -.->|hyperlink| Customers
 - **Microsoft 365** with SharePoint Online
 - **Excel 365** with Power Query support
 - **SharePoint Site** with list creation permissions
-
-
-
-
 
 
 ## Security & Permissions
