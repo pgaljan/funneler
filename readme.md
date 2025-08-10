@@ -6,13 +6,13 @@
 [![Power Query](https://img.shields.io/badge/Power%20Query-Enabled-orange.svg)](https://powerquery.microsoft.com/)
 [![PowerShell 7 Required](https://img.shields.io/badge/PowerShell%207-Recommended-yellow.svg)](https://github.com/PowerShell/PowerShell)
 
-> A Sharepoint learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation on the visualization, ETL, and list deployment processes. Anyone building this project will exercise skills with excel formulas, data visualization and conditional formatting, array handling, power query.  Those interested in learning and practicing automated deployment methods can leverage the included powershell PnP deployment scripts.
+> A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation on the visualization, ETL, and list deployment processes. Anyone building this project will exercise skills with excel formulas, data visualization and conditional formatting, array handling, and light power query.  Those interested in learning and practicing automated deployment methods can leverage the included powershell PnP deployment scripts.
 
 
 ## Features
 
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy manually using the [citizen developer](./docs/self-deploy.md) docs or the included PowerShell 7 scripts
+- **Flexible Deployment Methods** - Deploy manually using the [citizen developer](./docs/manual-deploy.md) docs or the included PowerShell 7 scripts
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel and PBI (coming soon)
 - **SharePoint Integration** - On-demand uni-directional sync with user-defined SharePoint lists
@@ -58,10 +58,10 @@ Excel -.->|hyperlink| Customers
 - **SharePoint Site** with list creation permissions
 
 ## Documentation
-- [admin guide](./docs/admin-guide.md): Automated deployment and security evaluation of the funneler solution
-- [self-deploy](./docs/self-deploy.md): Deployment guide for the citizen developer
+- [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
+- [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
 - [code-guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
-- [security](./docs/security.md): information about security
+- [security](./docs/security.md): information about security and the included
 
 ## Repository Structure
 

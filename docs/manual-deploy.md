@@ -1,4 +1,4 @@
-### About
+### Manual Deployment
 Use this guide if you would like to deploy this pipeline as a citizen developer, do not have access to or would otherwise prefer to avoid the powershell required to perform automated list deployment.
 
 If you plan to deploy more than a handful of these sites, I recommend you investigate the automated methods documented in the [admin guide](./admin-guide.md).  Setting this up without the use of templates is tedious, and realistically takes about 15 minutes.  An automated deploy is available in moments, without any tweaks needed, and can be integrated into automated, helpdesk-triggered workflows.
