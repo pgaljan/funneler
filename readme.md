@@ -16,11 +16,13 @@ Project builders will exercise skills with:
 - PowerShell PnP for list deployment
 
 
-## Features
-
+## Operator Features
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy manually using the [citizen developer](./docs/manual-deploy.md) docs or the included PowerShell 7 scripts
+- **Flexible Deployment Methods** - Deploy with minimal privileges using the [citizen developer](./docs/manual-deploy.md) docs or leverage the [automated deployment guide](./docs/auto-deploy.md)
+- **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
+
+## User Features
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel and PBI (coming soon)
 - **SharePoint Integration** - On-demand uni-directional sync with user-defined SharePoint lists
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
