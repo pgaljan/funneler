@@ -7,15 +7,18 @@ Install Powershell 7
 ```powershell
 winget install --id Microsoft.Powershell --source winget
 ```
+
 Run as Administrator
 ```powershell
 Start-Process pwsh -Verb RunAs
-```powershell
+```
+
 Configure Execution Policy
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 Get-ExecutionPolicy -List
 ```
+
 Install PnP PowerShell module
 ```powershell
 Install-Module -Name PnP.PowerShell -Force -AllowClobber -Scope CurrentUser
@@ -34,6 +37,7 @@ Verify Access
 $siteUrl = "https://your-tenant-name.sharepoint.com/sites/your-site-name"
 Connect-PnPOnline -Url $siteUrl -Interactive
 ```
+
 Authentication methods will vary by site.  
 ![Auth Error](./images/autherror.png)
 
@@ -41,6 +45,7 @@ If you get an auth error like this, create an app registration in entra, with re
 ![Redirect](./images/redirect.png)
 
 ## List configuration
+
 The following scripts leverage interactive authentication, meaning you will be prompted for the modern dev click through authentication experience at each step, and giving you the opportunity to observe the changes to the sharepoint site.  If you do not pass arguments, it will prompt you for a Sharepoint Site name and a deployment prefix that will be prepended to the name of each table. 
 
 Create List
