@@ -86,7 +86,6 @@ function Add-SampleCustomers {
     
     $sampleCustomers = @(
         @{
-            Title = "ACME Corporation"
             CustomerName = "ACME Corporation"
             PrimaryContact = "John Smith"
             PrimaryContactTitle = "CEO"
@@ -99,7 +98,6 @@ function Add-SampleCustomers {
             CustomerStatus = "Active"
         },
         @{
-            Title = "Global Industries"
             CustomerName = "Global Industries"
             PrimaryContact = "Sarah Johnson"
             PrimaryContactTitle = "Director"
@@ -112,7 +110,6 @@ function Add-SampleCustomers {
             CustomerStatus = "Prospect"
         },
         @{
-            Title = "Tech Solutions Inc"
             CustomerName = "Tech Solutions Inc"
             PrimaryContact = "David Lee"
             PrimaryContactTitle = "Founder"
@@ -125,7 +122,6 @@ function Add-SampleCustomers {
             CustomerStatus = "Active"
         },
         @{
-            Title = "Manufacturing Plus"
             CustomerName = "Manufacturing Plus"
             PrimaryContact = "Robert Taylor"
             PrimaryContactTitle = "Plant Manager"
@@ -138,7 +134,6 @@ function Add-SampleCustomers {
             CustomerStatus = "Active"
         },
         @{
-            Title = "Healthcare Partners"
             CustomerName = "Healthcare Partners"
             PrimaryContact = "Dr. Maria Garcia"
             PrimaryContactTitle = "Chief Medical Officer"
@@ -240,7 +235,6 @@ function Add-SampleOpportunities {
     
     $sampleOpportunities = @(
         @{
-            Title = "ERP Implementation Project"
             OpportunityName = "ERP Implementation Project"
             Status = "Active"
             OpportunityStage = "Proposal"
@@ -252,7 +246,6 @@ function Add-SampleOpportunities {
             NextMilestoneDate = (Get-Date).AddDays(15)
         },
         @{
-            Title = "Cloud Migration Initiative"
             OpportunityName = "Cloud Migration Initiative"
             Status = "At Risk"
             OpportunityStage = "Negotiation"
@@ -264,7 +257,6 @@ function Add-SampleOpportunities {
             NextMilestoneDate = (Get-Date).AddDays(20)
         },
         @{
-            Title = "Security Assessment & Audit"
             OpportunityName = "Security Assessment & Audit"
             Status = "Active"
             OpportunityStage = "Lead Qualification"
@@ -276,7 +268,6 @@ function Add-SampleOpportunities {
             NextMilestoneDate = (Get-Date).AddDays(10)
         },
         @{
-            Title = "Manufacturing Automation System"
             OpportunityName = "Manufacturing Automation System"
             Status = "Active"
             OpportunityStage = "Proposal"
@@ -288,7 +279,6 @@ function Add-SampleOpportunities {
             NextMilestoneDate = (Get-Date).AddDays(30)
         },
         @{
-            Title = "Healthcare Data Analytics Platform"
             OpportunityName = "Healthcare Data Analytics Platform"
             Status = "Critical"
             OpportunityStage = "Nurturing"
