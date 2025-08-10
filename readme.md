@@ -60,8 +60,8 @@ Refresh settings are the defaults for Excel.  If using in production, consider a
 ## Documentation
 - [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
 - [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
-- [Code Guide](./docs/code-guide.md): information about the ETL process and a breakdown of excel functions leveraged
-- [Security Guide](./docs/security.md): information about security and the included scripts
+- [Code Guide](./docs/code-guide.md): ETL process description & Excel functions 
+- [Security Guide](./docs/security.md): Security Assessment Script & further reading
 
 ## Architecture
 
