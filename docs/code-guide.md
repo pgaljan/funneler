@@ -2,7 +2,10 @@
 These queries provide a reusable template for connecting to SharePoint sites and lists defined by variables within the workbook itself. To implement this code, developers should create two named ranges in their Excel workbook: "siteUrl" containing the SharePoint site URL, and "custList" containing the exact name of the customer list as it appears in SharePoint. The query automatically handles SharePoint authentication, filters to the specified list, and expands the customer data into a flat table structure suitable for Power BI integration or Excel analysis and visualization. 
 
 ### Opportunities Data Connection
+I originally implemented using the legacy `Sharepoint.Tables` method, but migrated to REST API to (hopefully) resolve the comment log issue.
+
 ```m
+/* Old Sharepoint.Tables version
 let
     siteUrl = Excel.CurrentWorkbook(){[Name="siteUrl"]}[Content]{0}[Column1],
     listName = Excel.CurrentWorkbook(){[Name="oppList"]}[Content]{0}[Column1],
@@ -12,9 +15,45 @@ let
     #"Expanded Items" = Table.ExpandTableColumn(#"Removed Columns", "Items", {"Id", "Title", "Status", "Stage", "Amount", "Probability", "CustomerId", "Close", "NextMilestone", "NextMilestoneDate", "Comment Log", "Customer"}, {"Id", "Title", "Status", "Stage", "Amount", "Probability", "CustomerId", "Close", "NextMilestone", "NextMilestoneDate", "Comment Log", "Customer"})
 in
     #"Expanded Items"
+
+*/
+
+// Rest API Version
+
+let
+    siteUrl = Excel.CurrentWorkbook(){[Name="siteUrl"]}[Content]{0}[Column1],
+    listName = Excel.CurrentWorkbook(){[Name="oppList"]}[Content]{0}[Column1],
+    
+    // Use CustomerIdId to get the lookup ID value
+    restUrl = siteUrl & "_api/web/lists/getbytitle('" & listName & "')/items?$select=ID,Title,OpportunityName,Status,OpportunityStage,Amount,Probability,Close,NextMilestoneDate,NextMilestone,CustomerIdId,CommentLog,OpportunityOwner",
+    
+    Source = Json.Document(Web.Contents(restUrl, [
+        Headers=[
+            #"Accept" = "application/json;odata=verbose"
+        ]
+    ])),
+    
+    Results = Source[d][results],
+    
+    #"Converted to Table" = Table.FromList(Results, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    
+    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table", "Column1", 
+        {"ID", "Title", "OpportunityName", "Status", "OpportunityStage", "Amount", "Probability", "Close", "NextMilestoneDate", "NextMilestone", "CustomerIdId", "CommentLog", "OpportunityOwner"}, 
+        {"ID", "Title", "OpportunityName", "Status", "Stage", "Amount", "Probability", "Close", "NextMilestoneDate", "NextMilestone", "CustomerId", "Comment Log", "OpportunityOwner"}),
+    #"Extracted Text Before Delimiter" = Table.TransformColumns(#"Expanded Column1", {{"Close", each Text.BeforeDelimiter(_, "T"), type text}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Extracted Text Before Delimiter",{{"Close", type date}}),
+    #"Extracted Text Before Delimiter1" = Table.TransformColumns(#"Changed Type", {{"NextMilestoneDate", each Text.BeforeDelimiter(_, "T"), type text}}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Extracted Text Before Delimiter1",{{"NextMilestoneDate", type date}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Changed Type1",{"Title"})
+in
+    #"Removed Columns"
 ```
 ### Customers Data Connection
+
+Though not strictly necessarily, I re-implemented the customers as REST API to maintain consistency.  Old code is commented.
+
 ```m
+/* Old Sharepoint.Tables version
 let
     siteUrl = Excel.CurrentWorkbook(){[Name="siteUrl"]}[Content]{0}[Column1],
     listName = Excel.CurrentWorkbook(){[Name="custList"]}[Content]{0}[Column1],
@@ -25,6 +64,34 @@ let
     #"Expanded Website" = Table.ExpandRecordColumn(#"Expanded Items", "Website", {"Url"}, {"Url"})
 in
     #"Expanded Website"
+*/
+
+// Rest API
+let
+    siteUrl = Excel.CurrentWorkbook(){[Name="siteUrl"]}[Content]{0}[Column1],
+    listName = Excel.CurrentWorkbook(){[Name="custList"]}[Content]{0}[Column1],
+    
+    // Include CustomerName field
+    restUrl = siteUrl & "_api/web/lists/getbytitle('" & listName & "')/items?$select=ID,Title,CustomerName,PrimaryContact,PrimaryContactTitle,AlternateContact,AlternateContactTitle,AlternateContact2,AlternateContact2Title,Website,Modified,Created",
+    
+    Source = Json.Document(Web.Contents(restUrl, [
+        Headers=[
+            #"Accept" = "application/json;odata=verbose"
+        ]
+    ])),
+    
+    Results = Source[d][results],
+    
+    #"Converted to Table" = Table.FromList(Results, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    
+    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table", "Column1", 
+        {"ID", "Title", "CustomerName", "PrimaryContact", "PrimaryContactTitle", "AlternateContact", "AlternateContactTitle", "AlternateContact2", "AlternateContact2Title", "Website", "Modified", "Created"}, 
+        {"Id", "Title", "Customer Name", "PrimaryContact", "PrimaryContactTitle", "AlternateContact", "AlternateContactTitle", "AlternateContact2", "AlternateContact2Title", "Website", "Modified", "Created"}),
+    
+    #"Expanded Website" = Table.ExpandRecordColumn(#"Expanded Column1", "Website", {"Url"}, {"Url"}),
+    #"Removed Columns" = Table.RemoveColumns(#"Expanded Website",{"Title"})
+in
+    #"Removed Columns"
 ```
 
 ## Excel
