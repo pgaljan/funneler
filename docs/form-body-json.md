@@ -9,9 +9,9 @@
             "displayname": "Basics",
             "fields": [
                 "Opportunity Name",
-                "CustomerId",
                 "Opportunity Owner",
-                "Expected Close Date"
+                "Expected Close Date",
+                "CustomerId"
             ]
         },
         {
@@ -19,17 +19,31 @@
             "fields": [
                 "Status",
                 "Stage",
-                "Next Milestone",
-                "Next Deadline or Milestone"
+                "Next Deadline or Milestone",
+                "Next Milestone"
             ]
         },
         {
             "displayname": "Financial Details",
-            "fields":[    
+            "fields": [
                 "Opportunity Value",
-                "Win Probability",
-                "Comment Log"
-        ]
+                "Win Probability"
+            ]
+        },
+        {
+            "displayname": "Revenue Model",
+            "fields": [
+                "Recurring Revenue Model",
+                "Recurrences",
+                "Start Date"
+            ]
+        },
+        {
+            "displayname": "",
+            "fields": [
+                "Comment Log",
+                "Title"
+            ]
         }
     ]
 }

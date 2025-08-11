@@ -127,10 +127,17 @@ function Get-RecurringRevenue {
     return [Math]::Round($TotalAmount * $percentage, 0)
 }
 
-# Function to get random recurrence period
+# Function to get random recurrence period - updated for the actual field type
 function Get-RecurrencePeriod {
-    $recurrenceOptions = @("Monthly", "Quarterly", "Semi-Annually", "Annually")
-    return $recurrenceOptions | Get-Random
+    # Based on the XML, RecurringRevenueModel is a Choice field, and Recurrences is a Number field
+    # So Recurrences should be a number, not a text choice
+    return Get-Random -Minimum 1 -Maximum 60  # 1 to 60 recurrences
+}
+
+# Function to get random recurring revenue model - this is the Choice field
+function Get-RecurringRevenueModel {
+    $modelOptions = @("Monthly", "Quarterly", "Semi-Annually", "Annually", "One-time", "Usage-based")
+    return $modelOptions | Get-Random
 }
 
 # Function to get start date (5-90 days after close date)
@@ -570,8 +577,8 @@ function Add-SampleOpportunities {
     $recurrenceField = $null
     $startDateField = $null
     
-    # Try different possible field names for RecurringRevenue
-    $possibleRecurringNames = @("RecurringRevenue", "Recurring_x0020_Revenue", "RecurringRevenue0", "Recurring")
+    # Try different possible field names for RecurringRevenue - put the correct one first
+    $possibleRecurringNames = @("RecurringRevenueModel", "RecurringRevenue", "Recurring_x0020_Revenue", "RecurringRevenue0", "Recurring", "RecurringAmount")
     foreach ($fieldName in $possibleRecurringNames) {
         if ($availableFields.ContainsKey($fieldName)) {
             $recurringRevenueField = $fieldName
@@ -579,8 +586,8 @@ function Add-SampleOpportunities {
         }
     }
     
-    # Try different possible field names for Recurrence
-    $possibleRecurrenceNames = @("Recurrence", "Recurrence0", "RecurrencePeriod", "Recurrent")
+    # Try different possible field names for Recurrence - Recurrences is correct
+    $possibleRecurrenceNames = @("Recurrences", "Recurrence", "Recurrence0", "RecurrencePeriod", "Recurrent", "RecurringPeriod")
     foreach ($fieldName in $possibleRecurrenceNames) {
         if ($availableFields.ContainsKey($fieldName)) {
             $recurrenceField = $fieldName
@@ -604,7 +611,7 @@ function Add-SampleOpportunities {
     
     # Check what the actual CustomerID lookup field internal name is
     $customerFieldName = $null
-    $possibleCustomerFieldNames = @("CustomerId", "CustomerID", "CustomerIDId", "CustomerIdId", "CustomerIDLookupId", "Customer", "CustomerLookup")
+    $possibleCustomerFieldNames = @("CustomerName", "CustomerIDId", "CustomerId", "CustomerID", "CustomerIdId", "CustomerIDLookupId", "Customer", "CustomerLookup")
     
     foreach ($fieldName in $possibleCustomerFieldNames) {
         if ($availableFields.ContainsKey($fieldName)) {
@@ -780,15 +787,17 @@ function Add-SampleOpportunities {
                 NextMilestoneDate = (Get-Date).AddDays((Get-Random -Minimum 5 -Maximum 60))
             }
             
-            # Add recurring revenue fields using the correct field names
+            # Add recurring revenue fields using the correct field names and types
             if ($recurringRevenueField) {
-                $recurringRevenue = Get-RecurringRevenue -TotalAmount $amount
-                $opportunity[$recurringRevenueField] = $recurringRevenue
+                # RecurringRevenueModel is a Choice field - use the model function
+                $recurringRevenueModel = Get-RecurringRevenueModel
+                $opportunity[$recurringRevenueField] = $recurringRevenueModel
             }
             
             if ($recurrenceField) {
-                $recurrence = Get-RecurrencePeriod
-                $opportunity[$recurrenceField] = $recurrence
+                # Recurrences is a Number field - use random number
+                $recurrences = Get-RecurrencePeriod  # This now returns a number
+                $opportunity[$recurrenceField] = $recurrences
             }
             
             if ($startDateField) {
@@ -817,10 +826,10 @@ function Add-SampleOpportunities {
                 # Build display message based on available fields
                 $displayMessage = "  ✓ Added opportunity: $($opportunity.OpportunityName) ($($opportunity.Amount.ToString('C0')))"
                 if ($recurringRevenueField -and $opportunity.ContainsKey($recurringRevenueField)) {
-                    $displayMessage += " - Recurring: $($opportunity[$recurringRevenueField].ToString('C0'))"
+                    $displayMessage += " - Model: $($opportunity[$recurringRevenueField])"
                 }
                 if ($recurrenceField -and $opportunity.ContainsKey($recurrenceField)) {
-                    $displayMessage += " $($opportunity[$recurrenceField])"
+                    $displayMessage += " ($($opportunity[$recurrenceField]) times)"
                 }
                 
                 Write-Host $displayMessage -ForegroundColor Green
@@ -899,8 +908,8 @@ if ($opportunitiesExists) {
     Write-Host "  Status: 80% Active, 15% At Risk, 5% Critical" -ForegroundColor Gray
     Write-Host "  Customer distribution: 1 customer (5 opps), 2 customers (3 opps each)," -ForegroundColor Gray
     Write-Host "                         5 customers (0 opps), remaining distributed" -ForegroundColor Gray
-    Write-Host "  Recurring revenue: 5-25% of total amount" -ForegroundColor Gray
-    Write-Host "  Recurrence periods: Monthly, Quarterly, Semi-Annually, Annually" -ForegroundColor Gray
+    Write-Host "  Recurring revenue models: Monthly, Quarterly, Semi-Annually, Annually, One-time, Usage-based" -ForegroundColor Gray
+    Write-Host "  Recurrence counts: 1-60 occurrences" -ForegroundColor Gray
     Write-Host "  Start dates: 5-90 days after close date" -ForegroundColor Gray
 }
 
@@ -913,8 +922,8 @@ Write-Host "  • Varied opportunity stages and probability levels" -ForegroundC
 Write-Host "  • Strategic customer-opportunity assignments" -ForegroundColor Gray
 Write-Host "  • Realistic contact information and milestone dates" -ForegroundColor Gray
 Write-Host "  • Proper lookup relationships between lists" -ForegroundColor Gray
-Write-Host "  • Recurring revenue (5-25% of total amount)" -ForegroundColor Gray
-Write-Host "  • Various recurrence periods (Monthly to Annually)" -ForegroundColor Gray
+Write-Host "  • Recurring revenue models (Monthly, Quarterly, etc.)" -ForegroundColor Gray
+Write-Host "  • Random recurrence counts (1-60 occurrences)" -ForegroundColor Gray
 Write-Host "  • Start dates calculated 5-90 days after close" -ForegroundColor Gray
 
 # Disconnect
