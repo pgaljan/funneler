@@ -23,89 +23,14 @@ https://**yourPortalName**.sharepoint.com/_layouts/15/sharepoint.aspx?&login_hin
 
 Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDAvXW) for more information about creating SharePoint sites.
 
-#### Create lists from [template.xlsx](../templates/template.xlsx)
+#### Create lists 
+Use a consistent available prefix
+- [Customers](../deployment/Customers.csv)
+- [Opportunities](../deployment/Opportunities.csv)
 
-**NOTE** The excel template is populated to generate a normal random distribution of opportunity amounts, win probability, close dates, milestones, and comment logs.  Each time you deploy from this template, you will have a unique data set.
+#### Create Custoner Name Lookup
+> Copy/Paste from CustomerId
 
-1. navigate to the opportunities worksheet
-2. Select any cell in the table and select the table design tab > Export > Export Table to Sharepoint list
-
-![Export Table](./images/export.png)
-
-3. Specify the tenant, site, and list names
-
-![List Specification](./images/listspec.png)
-
-4. Repeat the process with customers worksheet
-
-**Note the sharepoint list names in this process.  You will need these for the excel file to locate the proper lists.
-
-
-
-
-#### List settigs changes
-
-- In the Opportunities list, go to list settings (gear icon top left)
-- Turn on versioning.  Set the number of revisions this will carry.  **Note: comments will "roll off" after the number of retained versions are exceeeded.  The automated deployment starts with 500 revisions retained.
-
-#### Column additions & changes
-
-**Customers**:
-- Add "Website" column as HTML **case sensitive**
-- Add "Comment Log" column as multi-line append
-- Add Lookup for Customer
-
-**Opportunities**:
-- Hide Title Column
-- Change Stage to Choice:
-```
-Lead Qualification
-Nurturing
-Proposal
-Negotiation
-Project Execution
-Closeout
-```
-- Change the Status to Choice:
-```
-Active
-At Risk
-Critical
-```
-- Change Probability to Choice:
-```
-Low
-Medium
-High
-```
-- Add "Customer Name" column as Lookup to the Opportunities Table Name column
-- Add "Comment Log" column as multi-line append changes
-
-#### Verify List Setup
-When complete, your lists should be comprised of the following at minimum
-
-##### Opportunities List
-- **Opportunity Name** (Text) - Opportunity name
-- **Status** (Choice) - On Track, At Risk, Critical
-- **Stage** (Choice) - Lead Qualification, Nurturing, Proposal, Negotiation, Project Execution, Closeout
-- **Amount** (Currency) - Deal value
-- **Probability** (Choice) - Low, Medium, High
-- **CustomerId** (Lookup) - Link to Customers list
-- **Opportunity Owner** (text) - Opportunity owner (recommend against turning this into a Person Data Type, as it can cause downstream power query issues)
-- **Close** (Date) - Expected close date
-- **NextMilestone** (Text) - Next milestone description
-- **NextMilestoneDate** (Date) - Milestone deadline
-- **Comment Log** (Multiple Lines, Append) - Activity notes
-
-##### Customers List
-- **Customer Name** (Text) - Company name
-- **Primary Contact** (Text) - Main contact person
-- **Primary Contact Title** (Text) - Contact job title
-- **Alternate Contact** (Text) - Secondary contact
-- **Alternate Title** (Text) - Secondary contact
-- **Alternate Contact 2** (Text) - Secondary contact
-- **Alternate Contact 2 Title** (Text) - Secondary contact
-- **Website** (Hyperlink) - Company website
 
 #### (optional) apply body JSON format
 Leverage this as body JSON on the respective forms to clean up the look and feel for data entry.
@@ -118,7 +43,7 @@ If you plan to make extensive use of the sharepoint forms, you should apply [for
 - Add a test opportunity
 - Add users to the site members
 
-#### Prep the excel file
+#### Launch and modify settings in Citizen Deployed Frontend excel
 - Open the excel
 - Modify site URL and list names
 - Refresh all
