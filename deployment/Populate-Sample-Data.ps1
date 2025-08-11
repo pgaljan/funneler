@@ -116,6 +116,33 @@ function Get-RandomWeekday {
     return $targetDate
 }
 
+# Function to get random recurring revenue amount based on total amount
+function Get-RecurringRevenue {
+    param(
+        [double]$TotalAmount
+    )
+    
+    # Generate recurring revenue as 5-25% of total amount
+    $percentage = (Get-Random -Minimum 5 -Maximum 26) / 100.0
+    return [Math]::Round($TotalAmount * $percentage, 0)
+}
+
+# Function to get random recurrence period
+function Get-RecurrencePeriod {
+    $recurrenceOptions = @("Monthly", "Quarterly", "Semi-Annually", "Annually")
+    return $recurrenceOptions | Get-Random
+}
+
+# Function to get start date (5-90 days after close date)
+function Get-StartDate {
+    param(
+        [DateTime]$CloseDate
+    )
+    
+    $daysAfterClose = Get-Random -Minimum 5 -Maximum 91
+    return $CloseDate.AddDays($daysAfterClose)
+}
+
 # Function to add sample customers (expanded to 30)
 function Add-SampleCustomers {
     param([string]$ListName)
@@ -520,44 +547,99 @@ function Add-SampleOpportunities {
     Write-Host "  Waiting for field propagation..." -ForegroundColor Gray
     Start-Sleep -Seconds 3
     
+    # Check what fields exist in the list
+    Write-Host "  Analyzing list fields..." -ForegroundColor Gray
+    $listFields = Get-PnPField -List $ListName
+    $availableFields = @{}
+    foreach ($field in $listFields) {
+        $availableFields[$field.InternalName] = $field.Title
+    }
+    
+    # Debug: Show all fields in the list
+    Write-Host "  Available fields in list:" -ForegroundColor Gray
+    foreach ($fieldName in ($availableFields.Keys | Sort-Object)) {
+        $fieldTitle = $availableFields[$fieldName]
+        $field = $listFields | Where-Object { $_.InternalName -eq $fieldName }
+        $fieldType = if ($field) { $field.TypeDisplayName } else { "Unknown" }
+        Write-Host "    $fieldName -> $fieldTitle ($fieldType)" -ForegroundColor Gray
+    }
+    Write-Host ""
+    
+    # Check for recurring revenue fields with multiple possible names
+    $recurringRevenueField = $null
+    $recurrenceField = $null
+    $startDateField = $null
+    
+    # Try different possible field names for RecurringRevenue
+    $possibleRecurringNames = @("RecurringRevenue", "Recurring_x0020_Revenue", "RecurringRevenue0", "Recurring")
+    foreach ($fieldName in $possibleRecurringNames) {
+        if ($availableFields.ContainsKey($fieldName)) {
+            $recurringRevenueField = $fieldName
+            break
+        }
+    }
+    
+    # Try different possible field names for Recurrence
+    $possibleRecurrenceNames = @("Recurrence", "Recurrence0", "RecurrencePeriod", "Recurrent")
+    foreach ($fieldName in $possibleRecurrenceNames) {
+        if ($availableFields.ContainsKey($fieldName)) {
+            $recurrenceField = $fieldName
+            break
+        }
+    }
+    
+    # Try different possible field names for StartDate
+    $possibleStartDateNames = @("StartDate", "Start_x0020_Date", "StartDate0", "Start")
+    foreach ($fieldName in $possibleStartDateNames) {
+        if ($availableFields.ContainsKey($fieldName)) {
+            $startDateField = $fieldName
+            break
+        }
+    }
+    
+    Write-Host "  Field mapping results:" -ForegroundColor Gray
+    Write-Host "    RecurringRevenue: $(if ($recurringRevenueField) { "✓ $recurringRevenueField" } else { '✗ Not found' })" -ForegroundColor $(if ($recurringRevenueField) { 'Green' } else { 'Red' })
+    Write-Host "    Recurrence: $(if ($recurrenceField) { "✓ $recurrenceField" } else { '✗ Not found' })" -ForegroundColor $(if ($recurrenceField) { 'Green' } else { 'Red' })
+    Write-Host "    StartDate: $(if ($startDateField) { "✓ $startDateField" } else { '✗ Not found' })" -ForegroundColor $(if ($startDateField) { 'Green' } else { 'Red' })
+    
     # Check what the actual CustomerID lookup field internal name is
     $customerFieldName = $null
-    $possibleFieldNames = @("CustomerID", "CustomerId", "CustomerIDId", "CustomerIdId", "CustomerIDLookupId")
+    $possibleCustomerFieldNames = @("CustomerId", "CustomerID", "CustomerIDId", "CustomerIdId", "CustomerIDLookupId", "Customer", "CustomerLookup")
     
-    foreach ($fieldName in $possibleFieldNames) {
-        try {
-            $customerField = Get-PnPField -List $ListName -Identity $fieldName -ErrorAction SilentlyContinue
-            if ($customerField) {
-                $customerFieldName = $customerField.InternalName
-                Write-Host "  Found customer lookup field: $fieldName (Internal: $customerFieldName)" -ForegroundColor Gray
+    foreach ($fieldName in $possibleCustomerFieldNames) {
+        if ($availableFields.ContainsKey($fieldName)) {
+            # Double-check it's actually a lookup field
+            $field = $listFields | Where-Object { $_.InternalName -eq $fieldName }
+            if ($field -and $field.TypeDisplayName -eq "Lookup") {
+                $customerFieldName = $fieldName
+                Write-Host "  Found customer lookup field: $fieldName (Display: $($availableFields[$fieldName]))" -ForegroundColor Gray
                 break
             }
-        } catch {
-            # Continue to next field name
         }
     }
     
     if (-not $customerFieldName) {
-        Write-Warning "CustomerID lookup field not found in $ListName. Trying to list all fields..."
-        try {
-            $allFields = Get-PnPField -List $ListName | Where-Object { $_.TypeDisplayName -eq "Lookup" -and $_.Title -like "*Customer*" }
-            if ($allFields) {
-                Write-Host "  Found customer-related lookup fields:" -ForegroundColor Gray
-                foreach ($field in $allFields) {
-                    Write-Host "    - $($field.Title) (Internal: $($field.InternalName))" -ForegroundColor Gray
-                }
-                # Use the first customer-related lookup field found
-                $customerFieldName = $allFields[0].InternalName
-                Write-Host "  Using field: $customerFieldName" -ForegroundColor Yellow
-            } else {
-                Write-Warning "No customer lookup fields found. Please ensure the CustomerID lookup field exists in the opportunities list."
-                return 0
+        Write-Warning "CustomerID lookup field not found in $ListName. Trying to find customer-related lookup fields..."
+        foreach ($fieldName in $availableFields.Keys) {
+            $field = $listFields | Where-Object { $_.InternalName -eq $fieldName }
+            if ($field -and $field.TypeDisplayName -eq "Lookup" -and ($fieldName -like "*Customer*" -or $availableFields[$fieldName] -like "*Customer*")) {
+                $customerFieldName = $fieldName
+                Write-Host "  Using customer lookup field: $fieldName (Display: $($availableFields[$fieldName]))" -ForegroundColor Yellow
+                break
             }
-        } catch {
-            Write-Error "Could not analyze fields in $ListName : $($_.Exception.Message)"
+        }
+        
+        if (-not $customerFieldName) {
+            Write-Warning "No customer lookup fields found. Please ensure a customer lookup field exists in the opportunities list."
+            Write-Host "  Available lookup fields:" -ForegroundColor Gray
+            foreach ($field in ($listFields | Where-Object { $_.TypeDisplayName -eq "Lookup" })) {
+                Write-Host "    $($field.InternalName) -> $($field.Title)" -ForegroundColor Gray
+            }
             return 0
         }
     }
+    
+    Write-Host "  Customer field mapping: $customerFieldName" -ForegroundColor Green
     
     # Get customer items for lookup
     try {
@@ -682,6 +764,10 @@ function Add-SampleOpportunities {
             elseif ($statusRand -le 20) { $status = "At Risk" }
             else { $status = "Active" }
             
+            # Generate close date
+            $closeDate = Get-RandomWeekday -DaysFromNow 512
+            
+            # Create base opportunity object
             $opportunity = @{
                 OpportunityName = $opportunityTemplates[$i]
                 Status = $status
@@ -689,9 +775,25 @@ function Add-SampleOpportunities {
                 Amount = $amount
                 Probability = $probability
                 OpportunityOwner = $owners | Get-Random
-                Close = Get-RandomWeekday -DaysFromNow 512
+                Close = $closeDate
                 NextMilestone = $milestones | Get-Random
                 NextMilestoneDate = (Get-Date).AddDays((Get-Random -Minimum 5 -Maximum 60))
+            }
+            
+            # Add recurring revenue fields using the correct field names
+            if ($recurringRevenueField) {
+                $recurringRevenue = Get-RecurringRevenue -TotalAmount $amount
+                $opportunity[$recurringRevenueField] = $recurringRevenue
+            }
+            
+            if ($recurrenceField) {
+                $recurrence = Get-RecurrencePeriod
+                $opportunity[$recurrenceField] = $recurrence
+            }
+            
+            if ($startDateField) {
+                $startDate = Get-StartDate -CloseDate $closeDate
+                $opportunity[$startDateField] = $startDate
             }
             
             # Assign customer based on our distribution plan
@@ -700,6 +802,10 @@ function Add-SampleOpportunities {
                 $customerIndex = $i % $customers.Count
             }
             $customer = $customers[$customerIndex]
+            
+            # Debug: Show what customer field we're trying to use
+            Write-Host "    Using customer field: $customerFieldName with customer ID: $($customer.Id)" -ForegroundColor Gray
+            
             $opportunity[$customerFieldName] = $customer.Id
             
             # Check if opportunity already exists
@@ -707,7 +813,17 @@ function Add-SampleOpportunities {
             
             if (-not $existingOpp) {
                 Add-PnPListItem -List $ListName -Values $opportunity -ErrorAction Stop
-                Write-Host "  ✓ Added opportunity: $($opportunity.OpportunityName) ($($opportunity.Amount.ToString('C0')))" -ForegroundColor Green
+                
+                # Build display message based on available fields
+                $displayMessage = "  ✓ Added opportunity: $($opportunity.OpportunityName) ($($opportunity.Amount.ToString('C0')))"
+                if ($recurringRevenueField -and $opportunity.ContainsKey($recurringRevenueField)) {
+                    $displayMessage += " - Recurring: $($opportunity[$recurringRevenueField].ToString('C0'))"
+                }
+                if ($recurrenceField -and $opportunity.ContainsKey($recurrenceField)) {
+                    $displayMessage += " $($opportunity[$recurrenceField])"
+                }
+                
+                Write-Host $displayMessage -ForegroundColor Green
                 $addedCount++
             } else {
                 Write-Host "  - Opportunity already exists: $($opportunity.OpportunityName)" -ForegroundColor Gray
@@ -783,6 +899,9 @@ if ($opportunitiesExists) {
     Write-Host "  Status: 80% Active, 15% At Risk, 5% Critical" -ForegroundColor Gray
     Write-Host "  Customer distribution: 1 customer (5 opps), 2 customers (3 opps each)," -ForegroundColor Gray
     Write-Host "                         5 customers (0 opps), remaining distributed" -ForegroundColor Gray
+    Write-Host "  Recurring revenue: 5-25% of total amount" -ForegroundColor Gray
+    Write-Host "  Recurrence periods: Monthly, Quarterly, Semi-Annually, Annually" -ForegroundColor Gray
+    Write-Host "  Start dates: 5-90 days after close date" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -794,6 +913,9 @@ Write-Host "  • Varied opportunity stages and probability levels" -ForegroundC
 Write-Host "  • Strategic customer-opportunity assignments" -ForegroundColor Gray
 Write-Host "  • Realistic contact information and milestone dates" -ForegroundColor Gray
 Write-Host "  • Proper lookup relationships between lists" -ForegroundColor Gray
+Write-Host "  • Recurring revenue (5-25% of total amount)" -ForegroundColor Gray
+Write-Host "  • Various recurrence periods (Monthly to Annually)" -ForegroundColor Gray
+Write-Host "  • Start dates calculated 5-90 days after close" -ForegroundColor Gray
 
 # Disconnect
 try {
