@@ -8,13 +8,13 @@
 
 > A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, two-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
 
-Project builders will exercise skills with:
-- Excel formulas, conditions, logic
-- Dynamic Array Functions
-- Data visualization methods
-- Environment-portable ETL
-- PowerShell PnP for list deployment
 
+## Documentation Quick Start
+[Citizen Developer Guide](./docs/manual-deploy.md)
+[Operator Guide](./docs/auto-deploy.md)
+[Security & Governance](./docs/security.md)
+[Code Guide](./docs/code-guide.md)
+[Form Body JSON](./docs/form-body-json.md)
 
 ## Operator Features
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
@@ -30,6 +30,14 @@ Project builders will exercise skills with:
 - **Visual Status Indicators** - At-a-glance opportunity health
 - **Hyperlinked Navigation** - Direct links to SharePoint records
 - **Multi-user Collaboration** - SharePoint-backed team workflows
+
+## Project builder experience
+- Excel formulas, conditions, logic
+- Dynamic Array Functions
+- Data visualization methods
+- Environment-portable ETL
+- PowerShell PnP automstion
+- Site Audit and drift reporting
 
 # Quick Start (Excel)
 1. Identify the Site URL and List Prefix of your pipeline
