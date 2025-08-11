@@ -105,8 +105,7 @@ When complete, your lists should be comprised of the following at minimum
 #### (optional) apply body JSON format
 Leverage this as body JSON on the respective forms to clean up the look and feel for data entry.
 
-If you plan to make extensive use of the sharepoint forms, you should apply the json body format from the [auto deployment guide](./auto-deploy.md#apply-form-body-json)
-
+If you plan to make extensive use of the sharepoint forms, you should apply [form body json](./form-body-json.md)
 
 #### Prep the lists for prod
 - Delete all rows
