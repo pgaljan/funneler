@@ -40,6 +40,9 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 
 **Note the sharepoint list names in this process.  You will need these for the excel file to locate the proper lists.
 
+
+
+
 #### List settigs changes
 
 - In the Opportunities list, go to list settings (gear icon top left)
@@ -49,6 +52,8 @@ Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDA
 
 **Customers**:
 - Add "Website" column as HTML **case sensitive**
+- Add "Comment Log" column as multi-line append
+- Add Lookup for Customer
 
 **Opportunities**:
 - Hide Title Column

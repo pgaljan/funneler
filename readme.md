@@ -18,7 +18,7 @@
 
 ## Operator Features
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy manually as a [citizen developer](./docs/manual-deploy.md) with [powershell automation](./docs/auto-deploy.md)
+- **Flexible Deployment Methods** - Deploy manually as a [citizen developer](./docs/manual-deploy.md) or with [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
 
