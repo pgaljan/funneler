@@ -189,11 +189,8 @@ function Add-CrmFields {
                 @{Name="Probability"; Type="Choice"; DisplayName="Win Probability"; Choices=@("Low", "Medium", "High"); Required=$true},
                 @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"; Required=$true},
                 @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
-                @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"},
-                # NEW FIELDS: RecurringRevenue model fields
-                @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Quarterly", "Monthly"); Required=$false},
-                @{Name="Recurrences"; Type="Number"; DisplayName="Recurrences"; Required=$false},
-                @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false; <Default>[Close]</Default>}
+                @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"}
+
             )
         }
         
@@ -213,22 +210,7 @@ function Add-CrmFields {
                         Add-PnPField -List $ListName -DisplayName $field.DisplayName -InternalName $field.Name -Type Number -ErrorAction SilentlyContinue
                     }
                     "DateTime" {
-                        if ($field.DefaultToClose -eq $true) {
-                            # For StartDate field, create with formula default to Close field
-                            $fieldXml = @"
-<Field Type='DateTime' 
-       DisplayName='$($field.DisplayName)' 
-       Name='$($field.Name)' 
-       StaticName='$($field.Name)'
-       Format='DateOnly'>
-    <Default>[Close]</Default>
-</Field>
-"@
-                            Add-PnPFieldFromXml -List $ListName -FieldXml $fieldXml -ErrorAction SilentlyContinue
-                            Write-Host "    ✓ StartDate field created with default to Close field" -ForegroundColor Gray
-                        } else {
-                            Add-PnPField -List $ListName -DisplayName $field.DisplayName -InternalName $field.Name -Type DateTime -ErrorAction SilentlyContinue
-                        }
+                        Add-PnPField -List $ListName -DisplayName $field.DisplayName -InternalName $field.Name -Type DateTime -ErrorAction SilentlyContinue
                     }
                     "URL" {
                         Add-PnPField -List $ListName -DisplayName $field.DisplayName -InternalName $field.Name -Type URL -ErrorAction SilentlyContinue
@@ -251,11 +233,6 @@ function Add-CrmFields {
             } catch {
                 Write-Warning "    Failed to add field $($field.DisplayName): $($_.Exception.Message)"
             }
-        }
-        
-        # Special handling for StartDate default value
-        if ($ListType -eq "Opportunities") {
-            Write-Host "  ✓ StartDate field configured to default to Close field value" -ForegroundColor Green
         }
         
     } catch {
@@ -421,11 +398,11 @@ if ($opportunitiesExists) {
         $customers = Get-PnPListItem -List $customersListName -ErrorAction SilentlyContinue
         
         if ($customers -and $customers.Count -gt 0) {
-            # Add sample opportunities with new recurring revenue fields
+            # Add sample opportunities
             $sampleOpportunities = @(
-                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="On Track"; Stage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); CommentLog="Initial discovery completed. Moving to proposal phase."; RecurringRevenueModel="Annually"; Recurrences=3; StartDate=(Get-Date).AddDays(30)},
-                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; Stage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); CommentLog="Pricing discussions ongoing. Customer budget concerns identified."; RecurringRevenueModel="Monthly"; Recurrences=12; StartDate=(Get-Date).AddDays(45)},
-                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="On Track"; Stage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); CommentLog="Initial contact made. Scheduling needs assessment meeting."; RecurringRevenueModel="Up Front"; Recurrences=1; StartDate=(Get-Date).AddDays(60)}
+                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="On Track"; Stage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); CommentLog="Initial discovery completed. Moving to proposal phase."},
+                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; Stage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); CommentLog="Pricing discussions ongoing. Customer budget concerns identified."},
+                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="On Track"; Stage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); CommentLog="Initial contact made. Scheduling needs assessment meeting."}
             )
             
             for ($i = 0; $i -lt $sampleOpportunities.Count -and $i -lt $customers.Count; $i++) {
@@ -451,12 +428,7 @@ if ($opportunitiesExists) {
 Write-Host ""
 if ($customersExists -and $opportunitiesExists) {
     Write-Host "✓ Deployment completed successfully!" -ForegroundColor Green
-    Write-Host "Both CRM lists have been created with custom fields including recurring revenue fields." -ForegroundColor Green
-    Write-Host ""
-    Write-Host "New Recurring Revenue Fields Added:" -ForegroundColor Cyan
-    Write-Host "  • Recurring Revenue Model (Choice: Up Front, Annually, Quarterly, Monthly)" -ForegroundColor Gray
-    Write-Host "  • Recurrences (Number: Integer field)" -ForegroundColor Gray
-    Write-Host "  • Start Date (Date field)" -ForegroundColor Gray
+    Write-Host "Both CRM lists have been created with custom fields." -ForegroundColor Green
 } elseif ($customersExists -or $opportunitiesExists) {
     Write-Host "⚠ Partial deployment completed" -ForegroundColor Yellow
     Write-Host "Some lists were created, but not all. Check the warnings above." -ForegroundColor Yellow
@@ -468,10 +440,6 @@ if ($customersExists -and $opportunitiesExists) {
 Write-Host ""
 Write-Host "Note: STP files contain complex templates that may require manual configuration." -ForegroundColor Cyan
 Write-Host "Consider extracting the STP files to examine their structure for complete deployment." -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Manual Configuration Required:" -ForegroundColor Yellow
-Write-Host "  • StartDate field: Set default value to Close field in SharePoint list settings" -ForegroundColor Gray
-Write-Host "  • Consider using Power Automate to automatically populate StartDate from Close field" -ForegroundColor Gray
 
 # Disconnect
 try {
