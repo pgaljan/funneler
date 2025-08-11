@@ -1,11 +1,11 @@
 ### Manual Deployment
 Use this guide if you would like to deploy this pipeline as a citizen developer, do not have access to or would otherwise prefer to avoid the powershell required to perform automated list deployment.
 
-If you plan to deploy more than a handful of these sites, I recommend you investigate the automated methods documented in the [admin guide](./admin-guide.md).  Setting this up without the use of templates is tedious, and realistically takes about 15 minutes.  An automated deploy is available in moments, without any tweaks needed, and can be integrated into automated, helpdesk-triggered workflows.
+If you plan to deploy more than a handful of these sites, I recommend you investigate the automated methods documented in the [admin guide](./admin-guide.md).  Setting this up without the use of templates is tedious, and realistically takes about 15 minutes.  An automated deploy is available in moments, without nearly as many tweaks needed, and can be integrated into automated, helpdesk-triggered workflows.
 
 In either case, it is **strongly** recommended that maintain your RBAC permissions at the site level (as opposed to list level). To maintain close and segmented control of permissions, consider deploying each sales pipeline to its own dedicated sharepoint site.  If you choose to deploy multiple sales pipelines to the same sharepoint site, please consider leveraging [automated deployment](./admin-guide.md) methods to ensure the lists are secured according to your business requirements.
 
-Before deploying on your own, read the short [security guide](security.md) to learn or refresh your memory around regulatory compliance requirements for systems like this.
+Before deploying on your own, read the short [security guide](./security.md) to learn or refresh your memory around regulatory compliance requirements for systems like this.
 
 Refer to the [code guide](./code-guide.md) if you are interested in adapting the m code to other use cases or learning more about the formulas leveraged in visualizations.
 

@@ -48,6 +48,9 @@ If you get an auth error like this, create an app registration in entra, with re
 
 The following scripts leverage interactive authentication, meaning you will be prompted for the modern dev click through authentication experience at each step, and giving you the opportunity to observe the changes to the sharepoint site.  If you do not pass arguments, it will prompt you for a Sharepoint Site name and a deployment prefix that will be prepended to the name of each table. 
 
+![deploy scripts](./images/deployScripts.png)
+> The excel file autoforms your powershell according to the excel file's configuration.  Highly recommend you leverage this
+
 Create List
 ```powershell
 .\Deploy-Lists.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
