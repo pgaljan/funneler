@@ -10,11 +10,11 @@
 
 
 ## Documentation Quick Start
-[Citizen Developer Guide](./docs/manual-deploy.md)
-[Operator Guide](./docs/auto-deploy.md)
-[Security & Governance](./docs/security.md)
-[Code Guide](./docs/code-guide.md)
-[Form Body JSON](./docs/form-body-json.md)
+- [Citizen Developer Guide](./docs/manual-deploy.md)
+- [Operator Guide](./docs/auto-deploy.md)
+- [Security & Governance](./docs/security.md)
+- [Code Guide](./docs/code-guide.md)
+- [Form Body JSON](./docs/form-body-json.md)
 
 ## Operator Features
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
