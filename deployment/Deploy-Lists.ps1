@@ -193,7 +193,7 @@ function Add-CrmFields {
                 # NEW FIELDS: RecurringRevenue model fields
                 @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Quarterly", "Monthly"); Required=$false},
                 @{Name="Recurrences"; Type="Number"; DisplayName="Recurrences"; Required=$false},
-                @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false; <Default>[Close]</Default>}
+                @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false}
             )
         }
         
