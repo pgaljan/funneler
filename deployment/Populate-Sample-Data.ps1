@@ -34,7 +34,7 @@ if (-not $PSBoundParameters.ContainsKey('ClientId')) {
 }
 
 Write-Host ""
-Write-Host "=== SharePoint Sample Data Population ===" -ForegroundColor Cyan
+Write-Host "=== SharePoint Enhanced Sample Data Population ===" -ForegroundColor Cyan
 Write-Host "Site: $SiteUrl" -ForegroundColor Yellow
 Write-Host "Prefix: $ListPrefix" -ForegroundColor Yellow
 Write-Host ""
@@ -65,6 +65,8 @@ Write-Host "✓ Site: $($web.Title)" -ForegroundColor Green
 # Define list names
 $customersListName = "$($ListPrefix)Customers"
 $opportunitiesListName = "$($ListPrefix)Opportunities"
+$contactsListName = "$($ListPrefix)Contacts"
+$milestonesListName = "$($ListPrefix)Milestones"
 
 # Function to verify list exists
 function Test-ListExists {
@@ -148,6 +150,27 @@ function Get-StartDate {
     
     $daysAfterClose = Get-Random -Minimum 5 -Maximum 91
     return $CloseDate.AddDays($daysAfterClose)
+}
+
+# Function to generate phone numbers
+function Get-RandomPhoneNumber {
+    $areaCode = Get-Random -Minimum 200 -Maximum 999
+    $exchange = Get-Random -Minimum 200 -Maximum 999
+    $number = Get-Random -Minimum 1000 -Maximum 9999
+    return "$areaCode-$exchange-$number"
+}
+
+# Function to generate email from name
+function Get-EmailFromName {
+    param(
+        [string]$FirstName,
+        [string]$LastName,
+        [string]$Domain
+    )
+    
+    $firstName = $FirstName.ToLower().Replace(" ", "")
+    $lastName = $LastName.ToLower().Replace(" ", "")
+    return "$firstName.$lastName@$Domain"
 }
 
 # Function to add sample customers (expanded to 30)
@@ -541,6 +564,128 @@ function Add-SampleCustomers {
     return $addedCount
 }
 
+# Function to add sample contacts (2-3 per customer)
+function Add-SampleContacts {
+    param(
+        [string]$ListName,
+        [string]$CustomersListName
+    )
+    
+    Write-Host "Adding sample contacts to $ListName..." -ForegroundColor Yellow
+    
+    # Get customer items for lookup
+    try {
+        $customers = Get-PnPListItem -List $CustomersListName -ErrorAction Stop
+        if ($customers.Count -eq 0) {
+            Write-Warning "No customers found in $CustomersListName. Cannot create contacts."
+            return 0
+        }
+        Write-Host "  Found $($customers.Count) customers for contact assignment" -ForegroundColor Gray
+    } catch {
+        Write-Error "Failed to get customers from $CustomersListName : $($_.Exception.Message)"
+        return 0
+    }
+    
+    # Find the customer lookup field
+    $listFields = Get-PnPField -List $ListName
+    $customerFieldName = $null
+    $possibleCustomerFieldNames = @("CustomerIdId", "CustomerId", "CustomerID", "Customer", "CustomerLookup")
+    
+    foreach ($fieldName in $possibleCustomerFieldNames) {
+        $field = $listFields | Where-Object { $_.InternalName -eq $fieldName }
+        if ($field -and $field.TypeDisplayName -eq "Lookup") {
+            $customerFieldName = $fieldName
+            Write-Host "  Found customer lookup field: $fieldName" -ForegroundColor Gray
+            break
+        }
+    }
+    
+    if (-not $customerFieldName) {
+        Write-Warning "Customer lookup field not found in $ListName. Cannot create contacts."
+        return 0
+    }
+    
+    # Sample contact data templates
+    $firstNames = @("John", "Jane", "Michael", "Sarah", "David", "Lisa", "Robert", "Jennifer", "William", "Mary", 
+                   "James", "Patricia", "Richard", "Linda", "Charles", "Barbara", "Joseph", "Elizabeth", "Thomas", "Maria",
+                   "Christopher", "Susan", "Daniel", "Margaret", "Matthew", "Dorothy", "Anthony", "Nancy", "Mark", "Karen",
+                   "Donald", "Helen", "Steven", "Sandra", "Paul", "Donna", "Andrew", "Carol", "Joshua", "Ruth")
+    
+    $lastNames = @("Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
+                  "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
+                  "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
+                  "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores")
+    
+    $jobTitles = @("Manager", "Director", "Coordinator", "Specialist", "Analyst", "Administrator", "Supervisor", 
+                  "Executive", "Officer", "Assistant", "Representative", "Consultant", "Engineer", "Technician",
+                  "VP", "President", "CEO", "CFO", "CTO", "COO", "Senior Manager", "Project Manager", "Operations Manager",
+                  "Sales Manager", "Marketing Manager", "IT Manager", "HR Manager", "Finance Manager", "Quality Manager")
+    
+    $addedCount = 0
+    
+    foreach ($customer in $customers) {
+        try {
+            # Get customer domain from website URL if available
+            $customerDomain = "company.com"  # Default
+            if ($customer["Website"]) {
+                try {
+                    $uri = [System.Uri]$customer["Website"]
+                    $customerDomain = $uri.Host.ToLower()
+                } catch {
+                    # Use customer name as domain if URL parsing fails
+                    $cleanName = $customer["CustomerName"].Replace(" ", "").Replace("&", "").Replace(".", "").ToLower()
+                    $customerDomain = "$cleanName.com"
+                }
+            } else {
+                # Use customer name as domain
+                $cleanName = $customer["CustomerName"].Replace(" ", "").Replace("&", "").Replace(".", "").ToLower()
+                $customerDomain = "$cleanName.com"
+            }
+            
+            # Generate 2-3 contacts per customer
+            $numContacts = Get-Random -Minimum 2 -Maximum 4
+            
+            for ($i = 0; $i -lt $numContacts; $i++) {
+                $firstName = $firstNames | Get-Random
+                $lastName = $lastNames | Get-Random
+                $fullName = "$firstName $lastName"
+                $jobTitle = $jobTitles | Get-Random
+                $email = Get-EmailFromName -FirstName $firstName -LastName $lastName -Domain $customerDomain
+                $officePhone = Get-RandomPhoneNumber
+                $mobilePhone = Get-RandomPhoneNumber
+                
+                $contact = @{
+                    ContactName = $fullName
+                    JobTitle = $jobTitle
+                    OfficePhone = $officePhone
+                    MobilePhone = $mobilePhone
+                    Email = $email
+                }
+                
+                # Add customer lookup
+                $contact[$customerFieldName] = $customer.Id
+                
+                # Check if contact already exists (by name and customer)
+                $existingContact = Get-PnPListItem -List $ListName -Query "<View><Query><Where><And><Eq><FieldRef Name='ContactName'/><Value Type='Text'>$fullName</Value></Eq><Eq><FieldRef Name='$customerFieldName'/><Value Type='Lookup'>$($customer.Id)</Value></Eq></And></Where></Query></View>" -ErrorAction SilentlyContinue
+                
+                if (-not $existingContact) {
+                    Add-PnPListItem -List $ListName -Values $contact -ErrorAction Stop
+                    Write-Host "  ✓ Added contact: $fullName ($jobTitle) at $($customer['CustomerName'])" -ForegroundColor Green
+                    $addedCount++
+                } else {
+                    Write-Host "  - Contact already exists: $fullName at $($customer['CustomerName'])" -ForegroundColor Gray
+                }
+            }
+            
+        } catch {
+            Write-Warning "  Failed to add contacts for customer $($customer['CustomerName']): $($_.Exception.Message)"
+        }
+    }
+    
+    Write-Host "  ✓ Added $addedCount new contacts" -ForegroundColor Green
+    return $addedCount
+}
+
 # Function to add sample opportunities (expanded to 40)
 function Add-SampleOpportunities {
     param(
@@ -846,12 +991,168 @@ function Add-SampleOpportunities {
     return $addedCount
 }
 
+# Function to add sample milestones (3-5 per opportunity)
+function Add-SampleMilestones {
+    param(
+        [string]$ListName,
+        [string]$OpportunitiesListName
+    )
+    
+    Write-Host "Adding sample milestones to $ListName..." -ForegroundColor Yellow
+    
+    # Get opportunity items for lookup
+    try {
+        $opportunities = Get-PnPListItem -List $OpportunitiesListName -ErrorAction Stop
+        if ($opportunities.Count -eq 0) {
+            Write-Warning "No opportunities found in $OpportunitiesListName. Cannot create milestones."
+            return 0
+        }
+        Write-Host "  Found $($opportunities.Count) opportunities for milestone assignment" -ForegroundColor Gray
+    } catch {
+        Write-Error "Failed to get opportunities from $OpportunitiesListName : $($_.Exception.Message)"
+        return 0
+    }
+    
+    # Find the opportunity lookup field
+    $listFields = Get-PnPField -List $ListName
+    $opportunityFieldName = $null
+    $possibleOpportunityFieldNames = @("OpportunityIdId", "OpportunityId", "OpportunityID", "Opportunity", "OpportunityLookup")
+    
+    foreach ($fieldName in $possibleOpportunityFieldNames) {
+        $field = $listFields | Where-Object { $_.InternalName -eq $fieldName }
+        if ($field -and $field.TypeDisplayName -eq "Lookup") {
+            $opportunityFieldName = $fieldName
+            Write-Host "  Found opportunity lookup field: $fieldName" -ForegroundColor Gray
+            break
+        }
+    }
+    
+    if (-not $opportunityFieldName) {
+        Write-Warning "Opportunity lookup field not found in $ListName. Cannot create milestones."
+        return 0
+    }
+    
+    # Milestone templates organized by opportunity stage
+    $milestoneTemplates = @{
+        "Lead Qualification" = @(
+            @{Name="Initial Contact"; Days=0; Status="Completed"},
+            @{Name="Needs Assessment"; Days=7; Status="In Progress"},
+            @{Name="Stakeholder Identification"; Days=14; Status="Not Started"},
+            @{Name="Budget Confirmation"; Days=21; Status="Not Started"}
+        )
+        "Nurturing" = @(
+            @{Name="Relationship Building"; Days=0; Status="In Progress"},
+            @{Name="Pain Point Analysis"; Days=10; Status="In Progress"},
+            @{Name="Solution Mapping"; Days=20; Status="Not Started"},
+            @{Name="Competitive Analysis"; Days=30; Status="Not Started"},
+            @{Name="ROI Calculation"; Days=40; Status="Not Started"}
+        )
+        "Proposal" = @(
+            @{Name="Requirements Gathering"; Days=0; Status="Completed"},
+            @{Name="Technical Specification"; Days=7; Status="In Progress"},
+            @{Name="Proposal Development"; Days=14; Status="In Progress"},
+            @{Name="Pricing Analysis"; Days=21; Status="Not Started"},
+            @{Name="Proposal Review"; Days=28; Status="Not Started"}
+        )
+        "Negotiation" = @(
+            @{Name="Contract Terms Review"; Days=0; Status="In Progress"},
+            @{Name="Legal Review"; Days=7; Status="In Progress"},
+            @{Name="Pricing Negotiation"; Days=14; Status="Not Started"},
+            @{Name="Final Terms Agreement"; Days=21; Status="Not Started"}
+        )
+        "Project Execution" = @(
+            @{Name="Project Kickoff"; Days=0; Status="Completed"},
+            @{Name="Phase 1 Delivery"; Days=30; Status="In Progress"},
+            @{Name="Phase 2 Delivery"; Days=60; Status="Not Started"},
+            @{Name="Testing & QA"; Days=90; Status="Not Started"},
+            @{Name="User Training"; Days=100; Status="Not Started"}
+        )
+        "Closeout" = @(
+            @{Name="Final Delivery"; Days=0; Status="Completed"},
+            @{Name="Customer Acceptance"; Days=7; Status="In Progress"},
+            @{Name="Documentation Handover"; Days=14; Status="Not Started"},
+            @{Name="Post-Implementation Review"; Days=30; Status="Not Started"}
+        )
+    }
+    
+    $owners = @("John Manager", "Sarah Director", "Mike Consultant", "Lisa Engineer", "Dr. Tech Advisor", 
+                "Amanda Sales", "Robert Analyst", "Jennifer PM", "David Specialist", "Maria Coordinator",
+                "Project Lead", "Technical Lead", "Business Analyst", "Quality Assurance", "Implementation Specialist")
+    
+    $addedCount = 0
+    
+    foreach ($opportunity in $opportunities) {
+        try {
+            # Get opportunity stage to determine appropriate milestones
+            $oppStage = $opportunity["OpportunityStage"]
+            if (-not $oppStage -or -not $milestoneTemplates.ContainsKey($oppStage)) {
+                Write-Warning "  Unknown opportunity stage '$oppStage' for opportunity $($opportunity['OpportunityName']). Using default milestones."
+                $oppStage = "Proposal"  # Default fallback
+            }
+            
+            # Get milestone templates for this stage
+            $stageTemplates = $milestoneTemplates[$oppStage]
+            
+            # Get opportunity close date to calculate milestone dates
+            $oppCloseDate = $opportunity["Close"]
+            if (-not $oppCloseDate) {
+                $oppCloseDate = (Get-Date).AddDays(60)  # Default if no close date
+            }
+            
+            # Create milestones for this opportunity
+            foreach ($template in $stageTemplates) {
+                try {
+                    # Calculate milestone date based on template offset from close date
+                    $milestoneDate = $oppCloseDate.AddDays(-$template.Days)
+                    
+                    # Ensure milestone date is not in the past (adjust if needed)
+                    if ($milestoneDate -lt (Get-Date)) {
+                        $milestoneDate = (Get-Date).AddDays((Get-Random -Minimum 1 -Maximum 30))
+                    }
+                    
+                    $milestone = @{
+                        MilestoneName = $template.Name
+                        Owner = $owners | Get-Random
+                        MilestoneDate = $milestoneDate
+                        MilestoneStatus = $template.Status
+                    }
+                    
+                    # Add opportunity lookup
+                    $milestone[$opportunityFieldName] = $opportunity.Id
+                    
+                    # Check if milestone already exists for this opportunity
+                    $existingMilestone = Get-PnPListItem -List $ListName -Query "<View><Query><Where><And><Eq><FieldRef Name='MilestoneName'/><Value Type='Text'>$($template.Name)</Value></Eq><Eq><FieldRef Name='$opportunityFieldName'/><Value Type='Lookup'>$($opportunity.Id)</Value></Eq></And></Where></Query></View>" -ErrorAction SilentlyContinue
+                    
+                    if (-not $existingMilestone) {
+                        Add-PnPListItem -List $ListName -Values $milestone -ErrorAction Stop
+                        Write-Host "  ✓ Added milestone: $($template.Name) for $($opportunity['OpportunityName'])" -ForegroundColor Green
+                        $addedCount++
+                    } else {
+                        Write-Host "  - Milestone already exists: $($template.Name) for $($opportunity['OpportunityName'])" -ForegroundColor Gray
+                    }
+                    
+                } catch {
+                    Write-Warning "  Failed to add milestone $($template.Name) for opportunity $($opportunity['OpportunityName']): $($_.Exception.Message)"
+                }
+            }
+            
+        } catch {
+            Write-Warning "  Failed to process milestones for opportunity $($opportunity['OpportunityName']): $($_.Exception.Message)"
+        }
+    }
+    
+    Write-Host "  ✓ Added $addedCount new milestones" -ForegroundColor Green
+    return $addedCount
+}
+
 # Check if lists exist
 Write-Host ""
 Write-Host "Checking for existing lists..." -ForegroundColor Yellow
 
 $customersExists = Test-ListExists -ListName $customersListName
 $opportunitiesExists = Test-ListExists -ListName $opportunitiesListName
+$contactsExists = Test-ListExists -ListName $contactsListName
+$milestonesExists = Test-ListExists -ListName $milestonesListName
 
 if ($customersExists) {
     Write-Host "✓ Found Customers list: $customersListName" -ForegroundColor Green
@@ -865,8 +1166,20 @@ if ($opportunitiesExists) {
     Write-Warning "Opportunities list '$opportunitiesListName' not found"
 }
 
-if (-not $customersExists -and -not $opportunitiesExists) {
-    Write-Error "Neither list found. Please check the list prefix and ensure lists have been created."
+if ($contactsExists) {
+    Write-Host "✓ Found Contacts list: $contactsListName" -ForegroundColor Green
+} else {
+    Write-Warning "Contacts list '$contactsListName' not found"
+}
+
+if ($milestonesExists) {
+    Write-Host "✓ Found Milestones list: $milestonesListName" -ForegroundColor Green
+} else {
+    Write-Warning "Milestones list '$milestonesListName' not found"
+}
+
+if (-not $customersExists -and -not $opportunitiesExists -and -not $contactsExists -and -not $milestonesExists) {
+    Write-Error "No lists found. Please check the list prefix and ensure lists have been created."
     Disconnect-PnPOnline
     exit 1
 }
@@ -876,12 +1189,22 @@ Write-Host ""
 Write-Host "Populating sample data..." -ForegroundColor Yellow
 
 $totalCustomersAdded = 0
+$totalContactsAdded = 0
 $totalOpportunitiesAdded = 0
+$totalMilestonesAdded = 0
 
-# Add customers
+# Add customers first (required for other lookups)
 if ($customersExists) {
     Write-Host ""
     $totalCustomersAdded = Add-SampleCustomers -ListName $customersListName
+}
+
+# Add contacts (requires customers to exist for lookups)
+if ($contactsExists -and $customersExists) {
+    Write-Host ""
+    $totalContactsAdded = Add-SampleContacts -ListName $contactsListName -CustomersListName $customersListName
+} elseif ($contactsExists -and -not $customersExists) {
+    Write-Warning "Cannot add contacts without customers list for lookup relationships"
 }
 
 # Add opportunities (requires customers to exist for lookups)
@@ -892,13 +1215,26 @@ if ($opportunitiesExists -and $customersExists) {
     Write-Warning "Cannot add opportunities without customers list for lookup relationships"
 }
 
+# Add milestones (requires opportunities to exist for lookups)
+if ($milestonesExists -and $opportunitiesExists) {
+    Write-Host ""
+    $totalMilestonesAdded = Add-SampleMilestones -ListName $milestonesListName -OpportunitiesListName $opportunitiesListName
+} elseif ($milestonesExists -and -not $opportunitiesExists) {
+    Write-Warning "Cannot add milestones without opportunities list for lookup relationships"
+}
+
 # Summary
 Write-Host ""
-Write-Host "=== Sample Data Population Complete ===" -ForegroundColor Green
+Write-Host "=== Enhanced Sample Data Population Complete ===" -ForegroundColor Green
 
 if ($customersExists) {
     Write-Host "✓ Customers list: $totalCustomersAdded new records added (30 total)" -ForegroundColor Gray
     Write-Host "  Distribution: Various industries and company types" -ForegroundColor Gray
+}
+
+if ($contactsExists) {
+    Write-Host "✓ Contacts list: $totalContactsAdded new records added (60-90 total)" -ForegroundColor Gray
+    Write-Host "  Distribution: 2-3 contacts per customer with realistic contact information" -ForegroundColor Gray
 }
 
 if ($opportunitiesExists) {
@@ -913,18 +1249,28 @@ if ($opportunitiesExists) {
     Write-Host "  Start dates: 5-90 days after close date" -ForegroundColor Gray
 }
 
+if ($milestonesExists) {
+    Write-Host "✓ Milestones list: $totalMilestonesAdded new records added (160-200 total)" -ForegroundColor Gray
+    Write-Host "  Distribution: 4-5 stage-appropriate milestones per opportunity" -ForegroundColor Gray
+    Write-Host "  Status distribution: Mix of Completed, In Progress, and Not Started" -ForegroundColor Gray
+    Write-Host "  Dates: Calculated based on opportunity close dates and stage requirements" -ForegroundColor Gray
+}
+
 Write-Host ""
-Write-Host "Sample data includes:" -ForegroundColor Cyan
+Write-Host "Enhanced sample data includes:" -ForegroundColor Cyan
 Write-Host "  • 30 diverse customers across multiple industries" -ForegroundColor Gray
+Write-Host "  • 60-90 contacts (2-3 per customer) with realistic contact details" -ForegroundColor Gray
 Write-Host "  • 40 opportunities with realistic value distribution" -ForegroundColor Gray
+Write-Host "  • 160-200 milestones (4-5 per opportunity) with stage-appropriate tasks" -ForegroundColor Gray
 Write-Host "  • Normal distribution of opportunity values ($25K-$2.5M)" -ForegroundColor Gray
 Write-Host "  • Varied opportunity stages and probability levels" -ForegroundColor Gray
 Write-Host "  • Strategic customer-opportunity assignments" -ForegroundColor Gray
 Write-Host "  • Realistic contact information and milestone dates" -ForegroundColor Gray
-Write-Host "  • Proper lookup relationships between lists" -ForegroundColor Gray
+Write-Host "  • Proper lookup relationships between all lists" -ForegroundColor Gray
 Write-Host "  • Recurring revenue models (Monthly, Quarterly, etc.)" -ForegroundColor Gray
 Write-Host "  • Random recurrence counts (1-60 occurrences)" -ForegroundColor Gray
 Write-Host "  • Start dates calculated 5-90 days after close" -ForegroundColor Gray
+Write-Host "  • Stage-appropriate milestones with realistic timelines" -ForegroundColor Gray
 
 # Disconnect
 try {

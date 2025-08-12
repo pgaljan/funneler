@@ -216,7 +216,7 @@ function Add-CrmFields {
             # Add opportunity-specific fields (excluding lookup field for now)
             $fields = @(
                 @{Name="OpportunityName"; Type="Text"; DisplayName="Opportunity Name"; Required=$true},
-                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical"); Required=$true},
+                @{Name="Status"; Type="Choice"; DisplayName="Status"; Choices=@("Active", "At Risk", "Critical", "Dormant"); Required=$true},
                 @{Name="OpportunityOwner"; Type="Text"; DisplayName="Opportunity Owner"},
                 @{Name="OpportunityStage"; Type="Choice"; DisplayName="Stage"; Choices=@("Lead Qualification", "Nurturing", "Proposal", "Negotiation", "Project Execution", "Closeout"); Required=$true},
                 @{Name="Amount"; Type="Currency"; DisplayName="Opportunity Value"; Required=$true},

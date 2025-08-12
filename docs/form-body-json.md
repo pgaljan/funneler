@@ -87,3 +87,53 @@
     ]
 }
 ```
+
+## Milestones
+
+```json
+{
+    "sections": [
+        {
+            "displayname": "Basics",
+            "fields": [
+                "Opportunity",
+                "Name",
+                "Date"
+            ]
+        },
+        {
+            "displayname": "Status",
+            "fields": [
+                "Status",
+                "Owner"
+            ]
+        }
+    ]
+}
+```
+
+## Contact
+
+```json
+{
+    "sections": [
+        {
+            "displayname": "Customer",
+            "fields": [
+                "Customer"
+            ]
+        },
+        {
+            "displayname": "Contact",
+            "fields": [
+                "Name",
+                "Job Title",
+                "Office Phone",
+                "Mobile Phone",
+                "Email"
+            ]
+        }
+
+    ]
+}
+```
