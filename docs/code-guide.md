@@ -171,4 +171,70 @@ The spreadsheet uses 21 unique Excel functions:
 | Slicer_Close_Quarter | Slicer | #N/A | Global | No | Close quarter slicer |
 | Slicer_Stage | Slicer | #N/A | Global | No | Stage slicer |
 
+## Recurrence
+The spreadsheet leverages a lambda function to generate a table of transactions from the recurrence data in the opportunity table:
 
+```lambda
+=LET(
+    source_data, recurrence,
+    ids, INDEX(source_data,,1),
+    customer_ids, INDEX(source_data,,2),
+    models, INDEX(source_data,,3),
+    recurrences, INDEX(source_data,,4),
+    start_dates, INDEX(source_data,,5),
+    amounts, INDEX(source_data,,6),
+    fq_values, INDEX(source_data,,7),
+    cq_values, INDEX(source_data,,8),
+
+    expanded_data, REDUCE(
+        {"ID","CustomerID","Date","Amount","FQ","CQ"},
+        SEQUENCE(ROWS(source_data)),
+        LAMBDA(acc,i,
+            LET(
+                current_id, INDEX(ids, i),
+                current_customer_id, INDEX(customer_ids, i),
+                current_model, INDEX(models, i),
+                current_recur, MAX(1, INDEX(recurrences, i)),
+                current_start, INDEX(start_dates, i),
+                current_amount, INDEX(amounts, i),
+                current_fq, INDEX(fq_values, i),
+                current_cq, INDEX(cq_values, i),
+
+                interval_days, SWITCH(current_model,
+                    "Monthly", 30,
+                    "Quarterly", 91,
+                    "Semi-Annually", 182,
+                    "Annually", 365,
+                    "Usage-based", 30,
+                    "One-time", 0,
+                    0
+                ),
+
+                dates_for_id, IF(current_model="One-time",
+                    SEQUENCE(current_recur, 1, current_start, 0),
+                    current_start + (SEQUENCE(current_recur) - 1) * interval_days
+                ),
+
+                ids_for_entry, SEQUENCE(current_recur, 1, current_id, 0),
+                customer_ids_for_entry, IF(SEQUENCE(current_recur), current_customer_id),
+                amounts_for_entry, SEQUENCE(current_recur, 1, current_amount, 0),
+                fq_for_entry, IF(SEQUENCE(current_recur), current_fq),
+                cq_for_entry, IF(SEQUENCE(current_recur), current_cq),
+
+                current_block, HSTACK(
+                    ids_for_entry,
+                    customer_ids_for_entry,
+                    dates_for_id,
+                    amounts_for_entry,
+                    fq_for_entry,
+                    cq_for_entry
+                ),
+
+                VSTACK(acc, current_block)
+            )
+        )
+    ),
+
+    expanded_data
+)
+```
