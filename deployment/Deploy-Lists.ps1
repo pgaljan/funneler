@@ -47,13 +47,12 @@ try {
 }
 
 Write-Host ""
-Write-Host "=== SharePoint CRM Lists Deployment (STP Version) ===" -ForegroundColor Cyan
+Write-Host "=== SharePoint CRM Lists Deployment (Enhanced Version) ===" -ForegroundColor Cyan
 Write-Host "Site: $SiteUrl" -ForegroundColor Yellow
 Write-Host "Prefix: $ListPrefix" -ForegroundColor Yellow
 Write-Host ""
 
 # Import PnP PowerShell
-
 try {
     Import-Module PnP.PowerShell -Force
     Write-Host "✓ PnP PowerShell loaded" -ForegroundColor Green
@@ -94,8 +93,16 @@ if (Test-Path $OpportunitiesStpFile) {
     Write-Warning "STP file not found: $OpportunitiesStpFile"
 }
 
-if ($stpFiles.Count -eq 0) {
-    Write-Error "No STP template files found. Cannot proceed."
+# Add new lists that don't require STP files
+$additionalLists = @(
+    @{Name = "Contacts"; ListName = "$($ListPrefix)Contacts"},
+    @{Name = "Milestones"; ListName = "$($ListPrefix)Milestones"}
+)
+
+Write-Host "✓ Additional lists to create: Contacts, Milestones" -ForegroundColor Green
+
+if ($stpFiles.Count -eq 0 -and $additionalLists.Count -eq 0) {
+    Write-Error "No template files found and no additional lists defined. Cannot proceed."
     exit 1
 }
 
@@ -152,6 +159,33 @@ function Deploy-StpFile {
     }
 }
 
+# Function to create basic list
+function Create-BasicList {
+    param(
+        [string]$ListName,
+        [string]$Description = ""
+    )
+    
+    try {
+        Write-Host "  Creating '$ListName'..." -ForegroundColor Yellow
+        
+        # Check if list already exists
+        $existingList = Get-PnPList -Identity $ListName -ErrorAction SilentlyContinue
+        if ($existingList) {
+            Write-Warning "  List '$ListName' already exists. Skipping creation."
+            return $existingList
+        }
+        
+        # Create a basic custom list
+        $newList = New-PnPList -Title $ListName -Template GenericList -ErrorAction Stop
+        Write-Host "    ✓ List created: $ListName" -ForegroundColor Green
+        return $newList
+        
+    } catch {
+        Write-Error "  Failed to create $ListName : $($_.Exception.Message)"
+        return $null
+    }
+}
 
 # Function to add common CRM fields to lists
 function Add-CrmFields {
@@ -194,6 +228,23 @@ function Add-CrmFields {
                 @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Quarterly", "Monthly"); Required=$false},
                 @{Name="Recurrences"; Type="Number"; DisplayName="Recurrences"; Required=$false},
                 @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false}
+            )
+        } elseif ($ListType -eq "Contacts") {
+            # Add contact-specific fields
+            $fields = @(
+                @{Name="ContactName"; Type="Text"; DisplayName="Name"; Required=$true},
+                @{Name="JobTitle"; Type="Text"; DisplayName="Job Title"},
+                @{Name="OfficePhone"; Type="Text"; DisplayName="Office Phone"},
+                @{Name="MobilePhone"; Type="Text"; DisplayName="Mobile Phone"},
+                @{Name="Email"; Type="Text"; DisplayName="Email"}
+            )
+        } elseif ($ListType -eq "Milestones") {
+            # Add milestone-specific fields
+            $fields = @(
+                @{Name="MilestoneName"; Type="Text"; DisplayName="Name"; Required=$true},
+                @{Name="Owner"; Type="Text"; DisplayName="Owner"},
+                @{Name="MilestoneDate"; Type="DateTime"; DisplayName="Date"; Required=$true},
+                @{Name="MilestoneStatus"; Type="Choice"; DisplayName="Status"; Choices=@("Not Started", "In Progress", "Completed", "On Hold", "Cancelled"); Required=$true}
             )
         }
         
@@ -334,6 +385,8 @@ Write-Host "Deploying STP templates..." -ForegroundColor Yellow
 $deployedLists = @()
 $customersListName = "$($ListPrefix)Customers"
 $opportunitiesListName = "$($ListPrefix)Opportunities"
+$contactsListName = "$($ListPrefix)Contacts"
+$milestonesListName = "$($ListPrefix)Milestones"
 
 foreach ($stpFile in $stpFiles) {
     Write-Host ""
@@ -349,11 +402,31 @@ foreach ($stpFile in $stpFiles) {
     }
 }
 
+# Deploy additional lists (Contacts and Milestones)
+Write-Host ""
+Write-Host "Creating additional lists..." -ForegroundColor Yellow
+
+foreach ($additionalList in $additionalLists) {
+    Write-Host ""
+    Write-Host "Processing $($additionalList.Name)..." -ForegroundColor Cyan
+    
+    $deployedList = Create-BasicList -ListName $additionalList.ListName -Description "$($additionalList.Name) list for CRM system"
+    
+    if ($deployedList) {
+        $deployedLists += $deployedList
+        
+        # Add specific fields for each list type
+        Add-CrmFields -ListName $additionalList.ListName -ListType $additionalList.Name
+    }
+}
+
 # Verify deployment
 Write-Host ""
 Write-Host "Verifying deployment..." -ForegroundColor Yellow
 $customersExists = $false
 $opportunitiesExists = $false
+$contactsExists = $false
+$milestonesExists = $false
 
 try {
     $customersList = Get-PnPList -Identity $customersListName -ErrorAction SilentlyContinue
@@ -377,17 +450,54 @@ try {
     Write-Warning "Could not verify Opportunities list"
 }
 
-# Create lookup relationships after both lists exist
+try {
+    $contactsList = Get-PnPList -Identity $contactsListName -ErrorAction SilentlyContinue
+    if ($contactsList) {
+        $contactsExists = $true
+        Write-Host "✓ Contacts list: $($contactsList.Title)" -ForegroundColor Green
+        Write-Host "  URL: $($contactsList.DefaultViewUrl)" -ForegroundColor Gray
+    }
+} catch {
+    Write-Warning "Could not verify Contacts list"
+}
+
+try {
+    $milestonesList = Get-PnPList -Identity $milestonesListName -ErrorAction SilentlyContinue
+    if ($milestonesList) {
+        $milestonesExists = $true
+        Write-Host "✓ Milestones list: $($milestonesList.Title)" -ForegroundColor Green
+        Write-Host "  URL: $($milestonesList.DefaultViewUrl)" -ForegroundColor Gray
+    }
+} catch {
+    Write-Warning "Could not verify Milestones list"
+}
+
+# Create lookup relationships after all lists exist
 Write-Host ""
 Write-Host "Setting up lookup relationships..." -ForegroundColor Yellow
 
 if ($customersExists -and $opportunitiesExists) {
     # Create lookup from Opportunities to Customers
-    Add-LookupField -SourceListName $opportunitiesListName -TargetListName $customersListName -FieldName "CustomerId" -DisplayName "CustomerId" -ShowField "CustomerName"
-    
+    Add-LookupField -SourceListName $opportunitiesListName -TargetListName $customersListName -FieldName "CustomerId" -DisplayName "Customer" -ShowField "CustomerName"
     Write-Host "✓ Lookup relationship created: $opportunitiesListName → $customersListName" -ForegroundColor Green
 } else {
-    Write-Warning "Cannot create lookup relationships - both lists must exist"
+    Write-Warning "Cannot create lookup relationship between Opportunities and Customers - both lists must exist"
+}
+
+if ($contactsExists -and $customersExists) {
+    # Create lookup from Contacts to Customers
+    Add-LookupField -SourceListName $contactsListName -TargetListName $customersListName -FieldName "CustomerId" -DisplayName "Customer" -ShowField "CustomerName"
+    Write-Host "✓ Lookup relationship created: $contactsListName → $customersListName" -ForegroundColor Green
+} else {
+    Write-Warning "Cannot create lookup relationship between Contacts and Customers - both lists must exist"
+}
+
+if ($milestonesExists -and $opportunitiesExists) {
+    # Create lookup from Milestones to Opportunities
+    Add-LookupField -SourceListName $milestonesListName -TargetListName $opportunitiesListName -FieldName "OpportunityId" -DisplayName "Opportunity" -ShowField "OpportunityName"
+    Write-Host "✓ Lookup relationship created: $milestonesListName → $opportunitiesListName" -ForegroundColor Green
+} else {
+    Write-Warning "Cannot create lookup relationship between Milestones and Opportunities - both lists must exist"
 }
 
 # Add sample data (optional)
@@ -415,7 +525,39 @@ if ($customersExists) {
     }
 }
 
-if ($opportunitiesExists) {
+if ($contactsExists -and $customersExists) {
+    try {
+        # Get customer items for lookup
+        $customers = Get-PnPListItem -List $customersListName -ErrorAction SilentlyContinue
+        
+        if ($customers -and $customers.Count -gt 0) {
+            # Add sample contacts
+            $sampleContacts = @(
+                @{Title="John Smith"; ContactName="John Smith"; JobTitle="CEO"; OfficePhone="555-0101"; MobilePhone="555-0201"; Email="john.smith@acme.com"},
+                @{Title="Jane Doe"; ContactName="Jane Doe"; JobTitle="VP Sales"; OfficePhone="555-0102"; MobilePhone="555-0202"; Email="jane.doe@acme.com"},
+                @{Title="Sarah Johnson"; ContactName="Sarah Johnson"; JobTitle="Director"; OfficePhone="555-0103"; MobilePhone="555-0203"; Email="sarah.johnson@global.com"}
+            )
+            
+            for ($i = 0; $i -lt $sampleContacts.Count -and $i -lt $customers.Count; $i++) {
+                $contact = $sampleContacts[$i]
+                $customer = $customers[$i]
+                
+                # Add customer lookup value
+                $contact["CustomerIdId"] = $customer.Id
+                
+                $existingContact = Get-PnPListItem -List $contactsListName -Query "<View><Query><Where><Eq><FieldRef Name='ContactName'/><Value Type='Text'>$($contact.ContactName)</Value></Eq></Where></Query></View>" -ErrorAction SilentlyContinue
+                if (-not $existingContact) {
+                    Add-PnPListItem -List $contactsListName -Values $contact -ErrorAction SilentlyContinue
+                    Write-Host "  ✓ Added contact: $($contact.ContactName)" -ForegroundColor Gray
+                }
+            }
+        }
+    } catch {
+        Write-Warning "Could not add sample contact data: $($_.Exception.Message)"
+    }
+}
+
+if ($opportunitiesExists -and $customersExists) {
     try {
         # Get customer items for lookup
         $customers = Get-PnPListItem -List $customersListName -ErrorAction SilentlyContinue
@@ -423,9 +565,9 @@ if ($opportunitiesExists) {
         if ($customers -and $customers.Count -gt 0) {
             # Add sample opportunities with new recurring revenue fields
             $sampleOpportunities = @(
-                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="On Track"; Stage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); CommentLog="Initial discovery completed. Moving to proposal phase."; RecurringRevenueModel="Annually"; Recurrences=3; StartDate=(Get-Date).AddDays(30)},
-                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; Stage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); CommentLog="Pricing discussions ongoing. Customer budget concerns identified."; RecurringRevenueModel="Monthly"; Recurrences=12; StartDate=(Get-Date).AddDays(45)},
-                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="On Track"; Stage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); CommentLog="Initial contact made. Scheduling needs assessment meeting."; RecurringRevenueModel="Up Front"; Recurrences=1; StartDate=(Get-Date).AddDays(60)}
+                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="Active"; OpportunityStage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); RecurringRevenueModel="Annually"; Recurrences=3; StartDate=(Get-Date).AddDays(30)},
+                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; OpportunityStage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); RecurringRevenueModel="Monthly"; Recurrences=12; StartDate=(Get-Date).AddDays(45)},
+                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="Active"; OpportunityStage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); RecurringRevenueModel="Up Front"; Recurrences=1; StartDate=(Get-Date).AddDays(60)}
             )
             
             for ($i = 0; $i -lt $sampleOpportunities.Count -and $i -lt $customers.Count; $i++) {
@@ -447,19 +589,74 @@ if ($opportunitiesExists) {
     }
 }
 
+if ($milestonesExists -and $opportunitiesExists) {
+    try {
+        # Get opportunity items for lookup
+        $opportunities = Get-PnPListItem -List $opportunitiesListName -ErrorAction SilentlyContinue
+        
+        if ($opportunities -and $opportunities.Count -gt 0) {
+            # Add sample milestones
+            $sampleMilestones = @(
+                @{Title="Technical Review"; MilestoneName="Technical Review"; Owner="John Manager"; MilestoneDate=(Get-Date).AddDays(15); MilestoneStatus="Not Started"},
+                @{Title="Contract Finalization"; MilestoneName="Contract Finalization"; Owner="Sarah Director"; MilestoneDate=(Get-Date).AddDays(20); MilestoneStatus="In Progress"},
+                @{Title="Stakeholder Meeting"; MilestoneName="Stakeholder Meeting"; Owner="Mike Consultant"; MilestoneDate=(Get-Date).AddDays(10); MilestoneStatus="Not Started"},
+                @{Title="Requirements Gathering"; MilestoneName="Requirements Gathering"; Owner="John Manager"; MilestoneDate=(Get-Date).AddDays(5); MilestoneStatus="Completed"},
+                @{Title="Security Audit"; MilestoneName="Security Audit"; Owner="Sarah Director"; MilestoneDate=(Get-Date).AddDays(35); MilestoneStatus="Not Started"}
+            )
+            
+            for ($i = 0; $i -lt $sampleMilestones.Count; $i++) {
+                $milestone = $sampleMilestones[$i]
+                # Cycle through opportunities for milestone assignments
+                $opportunityIndex = $i % $opportunities.Count
+                $opportunity = $opportunities[$opportunityIndex]
+                
+                # Add opportunity lookup value
+                $milestone["OpportunityIdId"] = $opportunity.Id
+                
+                $existingMilestone = Get-PnPListItem -List $milestonesListName -Query "<View><Query><Where><Eq><FieldRef Name='MilestoneName'/><Value Type='Text'>$($milestone.MilestoneName)</Value></Eq></Where></Query></View>" -ErrorAction SilentlyContinue
+                if (-not $existingMilestone) {
+                    Add-PnPListItem -List $milestonesListName -Values $milestone -ErrorAction SilentlyContinue
+                    Write-Host "  ✓ Added milestone: $($milestone.MilestoneName)" -ForegroundColor Gray
+                }
+            }
+        }
+    } catch {
+        Write-Warning "Could not add sample milestone data: $($_.Exception.Message)"
+    }
+}
+
 # Summary
 Write-Host ""
-if ($customersExists -and $opportunitiesExists) {
+$totalListsExpected = 4  # Customers, Opportunities, Contacts, Milestones
+$totalListsCreated = 0
+
+if ($customersExists) { $totalListsCreated++ }
+if ($opportunitiesExists) { $totalListsCreated++ }
+if ($contactsExists) { $totalListsCreated++ }
+if ($milestonesExists) { $totalListsCreated++ }
+
+if ($totalListsCreated -eq $totalListsExpected) {
     Write-Host "✓ Deployment completed successfully!" -ForegroundColor Green
-    Write-Host "Both CRM lists have been created with custom fields including recurring revenue fields." -ForegroundColor Green
+    Write-Host "All CRM lists have been created with custom fields and lookup relationships." -ForegroundColor Green
     Write-Host ""
-    Write-Host "New Recurring Revenue Fields Added:" -ForegroundColor Cyan
+    Write-Host "Lists Created:" -ForegroundColor Cyan
+    Write-Host "  • Customers - Customer management with contact information" -ForegroundColor Gray
+    Write-Host "  • Opportunities - Sales opportunities with recurring revenue tracking" -ForegroundColor Gray
+    Write-Host "  • Contacts - Contact information linked to customers" -ForegroundColor Gray
+    Write-Host "  • Milestones - Project milestones linked to opportunities" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "Lookup Relationships:" -ForegroundColor Cyan
+    Write-Host "  • Opportunities → Customers" -ForegroundColor Gray
+    Write-Host "  • Contacts → Customers" -ForegroundColor Gray
+    Write-Host "  • Milestones → Opportunities" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "New Recurring Revenue Fields Added to Opportunities:" -ForegroundColor Cyan
     Write-Host "  • Recurring Revenue Model (Choice: Up Front, Annually, Quarterly, Monthly)" -ForegroundColor Gray
     Write-Host "  • Recurrences (Number: Integer field)" -ForegroundColor Gray
     Write-Host "  • Start Date (Date field)" -ForegroundColor Gray
-} elseif ($customersExists -or $opportunitiesExists) {
+} elseif ($totalListsCreated -gt 0) {
     Write-Host "⚠ Partial deployment completed" -ForegroundColor Yellow
-    Write-Host "Some lists were created, but not all. Check the warnings above." -ForegroundColor Yellow
+    Write-Host "$totalListsCreated of $totalListsExpected lists were created successfully. Check the warnings above." -ForegroundColor Yellow
 } else {
     Write-Host "✗ Deployment failed" -ForegroundColor Red
     Write-Host "No lists were created successfully. Check the errors above." -ForegroundColor Red
@@ -472,6 +669,7 @@ Write-Host ""
 Write-Host "Manual Configuration Required:" -ForegroundColor Yellow
 Write-Host "  • StartDate field: Set default value to Close field in SharePoint list settings" -ForegroundColor Gray
 Write-Host "  • Consider using Power Automate to automatically populate StartDate from Close field" -ForegroundColor Gray
+Write-Host "  • Review and customize field validation rules as needed" -ForegroundColor Gray
 
 # Disconnect
 try {
