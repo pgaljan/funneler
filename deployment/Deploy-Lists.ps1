@@ -225,7 +225,7 @@ function Add-CrmFields {
                 @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
                 @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"},
                 # NEW FIELDS: RecurringRevenue model fields
-                @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Quarterly", "Monthly"); Required=$false},
+                @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Semi-Annually","Quarterly", "Monthly"); Required=$false},
                 @{Name="Recurrences"; Type="Number"; DisplayName="Recurrences"; Required=$false},
                 @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false}
             )
