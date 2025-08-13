@@ -17,15 +17,18 @@
 - [Form Body JSON](./docs/form-body-json.md)
 
 ## Features
-**Business Developers** will find a robust set of pipeline management features: 
+**Business and Sales Developers** will find a robust set of pipeline management features: 
 
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel
 - **Risk Reporting** - sales phase management and alerting
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
-- **Milestone Tracking** - Next steps and deadline management
-- **Visual Status Indicators** - At-a-glance opportunity health
+- **Milestone Tracking** - Deliverable management
+- **Integrated Document Library** - Attach any document type to any record in the pipeline
+- **Commenting and user tagging** - Office-style comments, user tagging, and actions 
+- **Opportunity Health** - User-defined, score-based opportunity health indicators 
 - **Hyperlinked Navigation** - Direct links to SharePoint records
 - **Multi-user Collaboration** - SharePoint-backed team workflows
+- **Flexible Consumption Model** - Stateless Excel or Power BI frontend
 
 **SharePoint Developer/Operators** will enjoy:
 
@@ -33,9 +36,9 @@
 - **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
-- **Bulk list management** - Manage lists en masse
-- **Auditing tools** - Audit and drift detection scripts
-- **Worry-free Licensing** - MIT License
+- **[Bulk list management](./deployment/day-2/readme.md/#2-manage-listsps1)** - Manage lists en masse
+- **[Auditing tools](./deployment/day-2/readme.md/#1-audit-list-securtyps1)** - Audit and drift detection scripts
+- **[Worry-free Licensing](./LICENSE)** - MIT License
 
 **Project Builders** deploying on their own will learn: 
 - **Excel functions** - Excel formulas, conditions, logic, arrays
@@ -186,6 +189,7 @@ erDiagram
 
 ## Roadmap
 - PBI dashboard
-- Recurring revenue setup
+- Mobile dashboard
+- Mobile interface
 - User-defined Phase
 - User defined Status
