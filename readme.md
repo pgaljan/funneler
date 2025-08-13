@@ -184,12 +184,9 @@ erDiagram
 - Consider dedicated SharePoint sites for scaleout and refined RBAC segmentation
 
 ## Known Issues
-- comment log disappears from excel power query, but remains in list (versioning limitation)
 
 ## Roadmap
-- M code refactor to resolve commment log issue
 - PBI dashboard
-- Expand customer metadata
 - Recurring revenue setup
 - User-defined Phase
 - User defined Status
