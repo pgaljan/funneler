@@ -224,9 +224,9 @@ function Add-CrmFields {
                 @{Name="Close"; Type="DateTime"; DisplayName="Expected Close Date"; Required=$true},
                 @{Name="NextMilestoneDate"; Type="DateTime"; DisplayName="Next Deadline or Milestone"},
                 @{Name="NextMilestone"; Type="Text"; DisplayName="Next Milestone"},
-                # NEW FIELDS: RecurringRevenue model fields
-                @{Name="RecurringRevenueModel"; Type="Choice"; DisplayName="Recurring Revenue Model"; Choices=@("Up Front", "Annually", "Semi-Annually","Quarterly", "Monthly"); Required=$false},
-                @{Name="Recurrences"; Type="Number"; DisplayName="Recurrences"; Required=$false},
+                # NEW FIELDS: [@[TransactionDate]]ingRevenue model fields
+                @{Name="[@[TransactionDate]]ingRevenueModel"; Type="Choice"; DisplayName="[@[TransactionDate]]ing Revenue Model"; Choices=@("One-time", "Annually", "Semi-Annually","Quarterly", "Monthly"); Required=$false},
+                @{Name="[@[TransactionDate]]ences"; Type="Number"; DisplayName="[@[TransactionDate]]ences"; Required=$false},
                 @{Name="StartDate"; Type="DateTime"; DisplayName="Start Date"; Required=$false}
             )
         } elseif ($ListType -eq "Contacts") {
@@ -563,11 +563,11 @@ if ($opportunitiesExists -and $customersExists) {
         $customers = Get-PnPListItem -List $customersListName -ErrorAction SilentlyContinue
         
         if ($customers -and $customers.Count -gt 0) {
-            # Add sample opportunities with new recurring revenue fields
+            # Add sample opportunities with new [@[TransactionDate]]ing revenue fields
             $sampleOpportunities = @(
-                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="Active"; OpportunityStage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); RecurringRevenueModel="Annually"; Recurrences=3; StartDate=(Get-Date).AddDays(30)},
-                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; OpportunityStage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); RecurringRevenueModel="Monthly"; Recurrences=12; StartDate=(Get-Date).AddDays(45)},
-                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="Active"; OpportunityStage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); RecurringRevenueModel="Up Front"; Recurrences=1; StartDate=(Get-Date).AddDays(60)}
+                @{Title="ERP Implementation Project"; OpportunityName="ERP Implementation Project"; Status="Active"; OpportunityStage="Proposal"; Amount=50000; Probability="High"; OpportunityOwner="John Manager"; Close=(Get-Date).AddDays(30); NextMilestone="Technical Review"; NextMilestoneDate=(Get-Date).AddDays(15); [@[TransactionDate]]ingRevenueModel="Annually"; [@[TransactionDate]]ences=3; StartDate=(Get-Date).AddDays(30)},
+                @{Title="Cloud Migration Initiative"; OpportunityName="Cloud Migration Initiative"; Status="At Risk"; OpportunityStage="Negotiation"; Amount=25000; Probability="Medium"; OpportunityOwner="Sarah Director"; Close=(Get-Date).AddDays(45); NextMilestone="Contract Finalization"; NextMilestoneDate=(Get-Date).AddDays(20); [@[TransactionDate]]ingRevenueModel="Monthly"; [@[TransactionDate]]ences=12; StartDate=(Get-Date).AddDays(45)},
+                @{Title="Security Assessment"; OpportunityName="Security Assessment"; Status="Active"; OpportunityStage="Lead Qualification"; Amount=15000; Probability="Low"; OpportunityOwner="Mike Consultant"; Close=(Get-Date).AddDays(60); NextMilestone="Stakeholder Meeting"; NextMilestoneDate=(Get-Date).AddDays(10); [@[TransactionDate]]ingRevenueModel="Up Front"; [@[TransactionDate]]ences=1; StartDate=(Get-Date).AddDays(60)}
             )
             
             for ($i = 0; $i -lt $sampleOpportunities.Count -and $i -lt $customers.Count; $i++) {
@@ -641,7 +641,7 @@ if ($totalListsCreated -eq $totalListsExpected) {
     Write-Host ""
     Write-Host "Lists Created:" -ForegroundColor Cyan
     Write-Host "  • Customers - Customer management with contact information" -ForegroundColor Gray
-    Write-Host "  • Opportunities - Sales opportunities with recurring revenue tracking" -ForegroundColor Gray
+    Write-Host "  • Opportunities - Sales opportunities with [@[TransactionDate]]ing revenue tracking" -ForegroundColor Gray
     Write-Host "  • Contacts - Contact information linked to customers" -ForegroundColor Gray
     Write-Host "  • Milestones - Project milestones linked to opportunities" -ForegroundColor Gray
     Write-Host ""
@@ -650,9 +650,9 @@ if ($totalListsCreated -eq $totalListsExpected) {
     Write-Host "  • Contacts → Customers" -ForegroundColor Gray
     Write-Host "  • Milestones → Opportunities" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "New Recurring Revenue Fields Added to Opportunities:" -ForegroundColor Cyan
-    Write-Host "  • Recurring Revenue Model (Choice: Up Front, Annually, Quarterly, Monthly)" -ForegroundColor Gray
-    Write-Host "  • Recurrences (Number: Integer field)" -ForegroundColor Gray
+    Write-Host "New [@[TransactionDate]]ing Revenue Fields Added to Opportunities:" -ForegroundColor Cyan
+    Write-Host "  • [@[TransactionDate]]ing Revenue Model (Choice: Up Front, Annually, Quarterly, Monthly)" -ForegroundColor Gray
+    Write-Host "  • [@[TransactionDate]]ences (Number: Integer field)" -ForegroundColor Gray
     Write-Host "  • Start Date (Date field)" -ForegroundColor Gray
 } elseif ($totalListsCreated -gt 0) {
     Write-Host "⚠ Partial deployment completed" -ForegroundColor Yellow

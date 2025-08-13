@@ -138,7 +138,7 @@ function Get-RecurrencePeriod {
 
 # Function to get random recurring revenue model - this is the Choice field
 function Get-RecurringRevenueModel {
-    $modelOptions = @("Monthly", "Quarterly", "Semi-Annually", "Annually", "One-time", "Usage-based")
+    $modelOptions = @("Monthly", "Quarterly", "Semi-Annually", "Annually", "One-time")
     return $modelOptions | Get-Random
 }
 
