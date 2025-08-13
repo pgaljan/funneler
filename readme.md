@@ -17,10 +17,10 @@
 - [Form Body JSON](./docs/form-body-json.md)
 
 ## Features
-**Business and Sales Developers** will find a robust set of pipeline management features: 
+**Business Operations Professionals** will find a robust set of pipeline management features: 
 
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel
-- **Risk Reporting** - sales phase management and alerting
+- **Risk Management** - Quarterly Revenue-to-Risk calculations
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
 - **Milestone Tracking** - Deliverable management
 - **Document Library** - Attach any document type to any record in the pipeline
@@ -155,9 +155,6 @@ erDiagram
 *Opportunity form*
 ![SharePoint Opportunity Form](docs/images/opportunityform.png)
 
-
-
-
 ## Requirements
 
 - **Microsoft 365** with SharePoint Online
@@ -187,26 +184,38 @@ erDiagram
 - Archive closed opportunities annually
 - Consider dedicated SharePoint sites for scaleout and refined RBAC segmentation
 
-## Known Issues
+
+## Issues
+### Known Issues
 - ETL will not work across DevOps and User-directed deployment 
   - (*Workaround* - two excel dashboards)
 
+
+### Bugs
+Use the github issues to create bugs.  Include, at minimum:
+- **Task** - (I am trying to `achieve outcome` with `tool` in `environment` running `version`)
+- **Expected behavior**  - (when I `take action`, I expect `certain values, output, or behavior`)
+- **Actual behavior** - (but I observe `undesired outcome`)
+- **Workarounds** - (I have tried `alternative workflows` to resolve this)
+- **Screenshots** - (this is what I mean)
+
+### Feature Enhancements
+If the feature you want is not listed below, open an issue on github.  Include, at minimum, leveraging the [user persona](./docs/user-persona.md):
+- **User story** (As a `user persona`, I would like to `feature`, so that I can `achieve outcome`)
+- *Acceptance Criterion* (Given I am `role` in `tool/interface`, when I `perform action`, I `observe outcome`)
+
+
+
 ## Roadmap
-- DevOps
-  - One-command install
-  - Form Body JSON
-  - List Item JSON
-  - List View Config
-- User
-  - Bulk Import Guide
-  - Converged Excel dashboard
-  - PBI dashboard
-  - Automated PBI deploy
-  - Mobile dashboard
-  - Mobile interface
-  - Cascading Milestone selector
-  - User-defined Phase
-  - User defined Status
-- Learner
-  - Data Dictionary
-  - Lesson plans
+| DevOps | BizOps | Learner |
+| --- | --- | --- |
+| One-command install |BizOps User Guide | Data Dictionary |
+| Form Body JSON | Converged Excel dashboard | PowerShell Walkthrough |
+| List Item JSON | PBI dashboard | Function Walkthrough |
+| List View Config | Mobile interface| ETL Walkthrough |
+| Automated PBI deploy | Mobile dashboard | Visualization Walkthrough |
+| Menufy Day 2 | Cascading Milestone selector |  |
+| Issues | User-defined Phase |  |
+|  | User defined Stage |  |
+|  | User defined Status |  |
+
