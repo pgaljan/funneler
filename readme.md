@@ -77,39 +77,52 @@ Refresh settings are the defaults for Excel.  If using in production, consider a
 erDiagram
     CUSTOMERS ||--o{ OPPORTUNITIES : "has"
     OPPORTUNITIES ||--o{ MILESTONES : "contains"
+    OPPORTUNITIES ||--o{ TRANSACTIONS : "contains"
     
     CUSTOMERS {
-        string Customer_Name PK "Primary identifier"
+        int CustomerId PK "Primary identifier"
+        string CustomerName 
         string Website
-        string NAICS_code "Industry classification"
-        string Status "Prospect/Active/Inactive/Lost"
+        string NAICScode "[]"
+        string Status "[]"
     }
     
     OPPORTUNITIES {
-        string Opportunity_Name PK "Primary identifier"
-        string Status "Active/At Risk/Critical"
-        string Opportunity_Owner
-        string Stage "Lead Qualification/Nurturing/Proposal/Negotiation/Project Execution/Closeout"
-        currency Opportunity_Value
-        string Win_Probability "Low/Medium/High"
-        datetime Expected_Close_Date
-        string Recurring_Revenue_Model "Up Front/Annually/Quarterly/Monthly"
+        int OpportunityId PK "Primary identifier"
+        string OpportunityName 
+        string Status "[]"
+        string OpportunityOwner
+        string Stage "[]"
+        currency OpportunityValue
+        string WinProbability "[]"
+        datetime ExpectedCloseDate
+        string RecurringRevenueModel "[]"
         number Recurrences
         datetime Start_Date
-        string CustomerId FK "References Customer_Name"
-        text Comment_Log
+        int CustomerId FK 
+        text Comment_Log "multi-line append" 
     }
     
     MILESTONES {
-        string Name PK "Milestone name"
-        string Opportunity FK "References Opportunity_Name"
+        int MilestoneId PK "Milestone name"
+        string MilestoneName
+        string OpportunityId FK 
         string Owner "Person responsible"
         datetime Date "Milestone date"
-        string Status "Not Started/In Progress/Completed/On Hold/Cancelled"
+        string Status "[]"
+    }
+
+    TRANSACTIONS {
+        int TransactionId PK 
+        int OpportunityId FK
+        int CustomerId FK
+        datetime TransactionDate 
+        string Status "[]"
     }
 
 ```
-
+> `Transactions` table is calculated via power query or Lambda function, depending on implementation
+>
 ## Screenshots
 
 ### Pipeline Dashboard
