@@ -34,7 +34,7 @@
 
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
 - **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
-- **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
+- **Thorough Documentation** - Read [DevOps](./docs/auto-deploy.md) and [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
 - **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
 - **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
