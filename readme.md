@@ -10,7 +10,7 @@
 
 
 ## Documentation Quick Start
-- [DevOps Guide](./docs/auto-deploy.md)
+- [SharePoint DevOps Guide](./docs/auto-deploy.md)
 - [Citizen Developer Guide](./docs/manual-deploy.md)
 - [Security & Governance](./docs/security.md)
 - [Code Guide](./docs/code-guide.md)
