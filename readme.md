@@ -17,14 +17,21 @@
 - [Form Body JSON](./docs/form-body-json.md)
 
 ## Operator Features
+**SharePoint DevOps** will enjoy:
+
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy manually as a [citizen developer](./docs/manual-deploy.md) or with [powershell automation](./docs/auto-deploy.md)
+- **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
+- **Bulk list management** - Manage lists en masse
+- **Auditing tools** - Audit and drift detection scripts
+- **Worry-free Licensing** - MIT License
 
 ## User Features
-- **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel in Excel and PBI (coming soon)
-- **SharePoint Integration** - On-demand uni-directional sync with user-defined SharePoint lists
+**Business Developers** will find a robust set of pipeline management features: 
+
+- **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel
+- **Risk Reporting** - sales phase management and alerting
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
 - **Milestone Tracking** - Next steps and deadline management
 - **Visual Status Indicators** - At-a-glance opportunity health
@@ -32,12 +39,13 @@
 - **Multi-user Collaboration** - SharePoint-backed team workflows
 
 ## Project builder experience
-- Excel formulas, conditions, logic
-- Dynamic Array Functions
-- Data visualization methods
-- Environment-portable ETL
-- PowerShell PnP automstion
-- Site Audit and drift reporting
+**Citizen developers** deploying on their own will learn: 
+- **Excel functions** - Excel formulas, conditions, logic, arrays
+- **Dashboarding** - Visualizations, conditional formatting, array presentation
+- **Data Modeling** - Data Entity Relationships
+- **Extract/Transform/Load** - Environment-portable ETL using Power Query
+- **SharePoint Automation** - PowerShell 7 PnP automation & authentication
+- **SharePoint Governance** - Audit, drift reporting, DLP and governance controls
 
 # Quick Start (Excel)
 1. Identify the Site URL and List Prefix of your pipeline
