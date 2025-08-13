@@ -16,11 +16,12 @@ The solution contains several types of code:
       - [Function Inventory](#function-inventory-1)
       - [Named Ranges Inventory](#named-ranges-inventory)
     - [Interesting functions](#interesting-functions)
-      - [Recurrence](#recurrence)
+      - [Transactions](#transactions)
       - [Fiscal Year Calculations](#fiscal-year-calculations)
   - [Power Query (M Code)](#power-query-m-code)
     - [Opportunities Data Connection](#opportunities-data-connection)
     - [Customers Data Connection](#customers-data-connection)
+    - [Transaction Table](#transaction-table)
 
 ## Excel
 
@@ -103,7 +104,7 @@ The spreadsheet uses 21 unique Excel functions:
 | Slicer_Stage | Slicer | #N/A | Global | No | Stage slicer |
 
 ### Interesting functions
-#### Recurrence
+#### Transactions
 The spreadsheet leverages a lambda function to generate a table of transactions from the recurrence data in the opportunity table:
 
 > Although an interesting and fun approach, I will move this from lambda to M to avoid spill conditions and simplfiy downstream calculations and filtering.
@@ -281,4 +282,50 @@ let
     #"Removed Columns" = Table.RemoveColumns(#"Expanded Website",{"Title"})
 in
     #"Removed Columns"
+```
+
+### Transaction Table
+This transform generates a transaction table from the recurrence data in the opportunities table.  It replaces the code in [Transactions](#transactions) section above.
+
+```m
+let
+    Source = Opportunities,
+    #"Renamed Columns" = Table.RenameColumns(Source,{{"ID", "OpportunityID"}}),
+    #"Replaced Value1" = Table.ReplaceValue(#"Renamed Columns",null,"One-time",Replacer.ReplaceValue,{"RecurringRevenueModel"}),
+    #"Removed Other Columns" = Table.SelectColumns(#"Replaced Value1",{"OpportunityID", "Amount", "Close", "CustomerId", "RecurringRevenueModel", "Recurrences", "StartDate"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Removed Other Columns", "calcStartDate", each if [StartDate] = null then [Close] else [StartDate]),
+    #"Removed Columns1" = Table.RemoveColumns(#"Added Conditional Column",{"StartDate"}),
+    #"Added Conditional Column1" = Table.AddColumn(#"Removed Columns1", "calcRecurrences", each if [Recurrences] = null then 1 else if [RecurringRevenueModel] = "One-time" then 1 else [Recurrences]),
+    #"Removed Columns2" = Table.RemoveColumns(#"Added Conditional Column1",{"Close", "Recurrences", "Amount"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Columns2",null,"One-time",Replacer.ReplaceValue,{"RecurringRevenueModel"}),
+    
+    // Function to calculate date increment based on recurring model
+    GetDateIncrement = (model as text, occurrenceNumber as number) =>
+        let
+            increment = if model = "Monthly" then occurrenceNumber - 1
+                       else if model = "Quarterly" then (occurrenceNumber - 1) * 3
+                       else if model = "Semi-Annually" then (occurrenceNumber - 1) * 6
+                       else if model = "Annually" then (occurrenceNumber - 1) * 12
+                       else if model = "One-time" then occurrenceNumber - 1 // Assuming monthly for usage-based
+                       else 0 // One-time
+        in
+            increment,
+    
+    // Expand each row based on calcRecurrences
+    #"Expanded Rows" = Table.ExpandListColumn(
+        Table.AddColumn(#"Replaced Value", "OccurrenceList", 
+            each List.Numbers(1, [calcRecurrences], 1)
+        ), "OccurrenceList"
+    ),
+    
+    // Calculate TransactionDate for each occurrence
+    #"Added Transaction Date" = Table.AddColumn(#"Expanded Rows", "TransactionDate", 
+        each Date.AddMonths([calcStartDate], GetDateIncrement([RecurringRevenueModel], [OccurrenceList]))
+    ),
+    
+    // Select and reorder final columns
+    #"Selected Columns" = Table.SelectColumns(#"Added Transaction Date", {"OpportunityID", "CustomerId", "TransactionDate"}),
+    #"Sorted Rows" = Table.Sort(#"Selected Columns",{{"TransactionDate", Order.Ascending}})
+in
+    #"Sorted Rows"
 ```
