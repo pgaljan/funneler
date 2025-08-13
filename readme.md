@@ -10,8 +10,8 @@
 
 
 ## Documentation Quick Start
+- [DevOps Guide](./docs/auto-deploy.md)
 - [Citizen Developer Guide](./docs/manual-deploy.md)
-- [Operator Guide](./docs/auto-deploy.md)
 - [Security & Governance](./docs/security.md)
 - [Code Guide](./docs/code-guide.md)
 - [Form Body JSON](./docs/form-body-json.md)
@@ -71,13 +71,6 @@ Open `Sales Funnel Sharepoint.xlsx` and navigate to **Settings**
 
 4. (Optional) Configure refresh
 Refresh settings are the defaults for Excel.  If using in production, consider adding a refresh on open, and clearing data on refresh.
-
-
-## Documentation
-- [Automated Deployment](./docs/auto-deploy.md): Automated deployment scripts and process
-- [Manual Deployment](./docs/manual-deploy.md.md): Deployment guide for the citizen developer
-- [Code Guide](./docs/code-guide.md): ETL process description & Excel functions 
-- [Security Guide](./docs/security.md): Security Assessment Script & further reading
 
 ## Architecture
 ```mermaid
