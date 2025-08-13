@@ -188,12 +188,25 @@ erDiagram
 - Consider dedicated SharePoint sites for scaleout and refined RBAC segmentation
 
 ## Known Issues
+- ETL will not work across DevOps and User-directed deployment 
+  - (*Workaround* - two excel dashboards)
 
 ## Roadmap
-- Converged Excel dashboard
-- PBI dashboard
-- Mobile dashboard
-- Mobile interface
-- Cascading Milestone selector
-- User-defined Phase
-- User defined Status
+- DevOps
+  - One-command install
+  - Form Body JSON
+  - List Item JSON
+  - List View Config
+- User
+  - Bulk Import Guide
+  - Converged Excel dashboard
+  - PBI dashboard
+  - Automated PBI deploy
+  - Mobile dashboard
+  - Mobile interface
+  - Cascading Milestone selector
+  - User-defined Phase
+  - User defined Status
+- Learner
+  - Data Dictionary
+  - Lesson plans

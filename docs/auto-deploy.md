@@ -5,7 +5,7 @@ This workflow brings you through the process of an automatic deployment of the s
   - [1. Create List](#1-create-list)
   - [2. Flag Fields as required](#2-flag-fields-as-required)
   - [3. Add Comment Log](#3-add-comment-log)
-  - [4. Populate list with sample data](#4-populate-list-with-sample-data)
+  - [4. *(Optional)* Populate list with sample data](#4-optional-populate-list-with-sample-data)
   - [5. Clean up](#5-clean-up)
   - [6. Launch](#6-launch)
 
@@ -77,11 +77,16 @@ The following scripts leverage interactive authentication, meaning you will be p
 ```
 > Turns on List versioning for the Opportunities list, adds comment log
 
-### 4. Populate list with sample data
+### 4. *(Optional)* Populate list with sample data
 ```powershell
-.\Add-Comment-Log.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
+.\Populate-Mock-Data.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
-> Optional, but useful for testing
+> Mostly consistent mock data
+
+```powershell
+.\Populate-Sample-Data.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
+```
+> Semi-random value generation
 
 
 ### 5. Clean up
