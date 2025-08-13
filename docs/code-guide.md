@@ -1,3 +1,185 @@
+# Funneler Code Guide
+The solution contains several types of code:
+1. Power/Query/M for ETL into Excel and PBI
+2. Excel functions (including modern array and LAMBDA) functions for calculation and visualization
+3. Powershell for automated Day 1 and Day 2 operations against Sharepoint Lists
+
+> This solution leverages array formulas only available in Office 365.
+
+- [Funneler Code Guide](#funneler-code-guide)
+  - [Excel](#excel)
+    - [Formula Patterns](#formula-patterns)
+      - [High Complexity Formulas](#high-complexity-formulas)
+      - [Primary Formula Patterns](#primary-formula-patterns)
+      - [External Dependencies](#external-dependencies)
+    - [Function Inventory](#function-inventory)
+      - [Function Inventory](#function-inventory-1)
+      - [Named Ranges Inventory](#named-ranges-inventory)
+    - [Interesting functions](#interesting-functions)
+      - [Recurrence](#recurrence)
+      - [Fiscal Year Calculations](#fiscal-year-calculations)
+  - [Power Query (M Code)](#power-query-m-code)
+    - [Opportunities Data Connection](#opportunities-data-connection)
+    - [Customers Data Connection](#customers-data-connection)
+
+## Excel
+
+### Formula Patterns
+
+#### High Complexity Formulas
+
+- **Dynamic Arrays**: Extensive use of UNIQUE, FILTER, SORTBY, and TRANSPOSE
+- **Nested Lookups**: Multiple XLOOKUP functions with complex criteria
+- **Structured References**: Heavy use of Excel table references (e.g., `View[[#This Row],[Id]]`)
+- **Complex Text Operations**: Date formatting and URL generation
+
+#### Primary Formula Patterns
+
+1. **Data Lookup and Display**: XLOOKUP patterns for retrieving related data
+2. **Dynamic Filtering**: FILTER and UNIQUE combinations for data analysis
+3. **URL Generation**: HYPERLINK formulas for SharePoint integration
+4. **Date Calculations**: Complex fiscal year and quarter calculations
+5. **Data Visualization Support**: Array formulas for chart data preparation
+
+#### External Dependencies
+- SharePoint Lists (Opportunities, Customers)
+- Named ranges for configuration settings
+- External data connections for real-time updates
+
+
+### Function Inventory
+
+The spreadsheet uses 21 unique Excel functions:
+
+#### Function Inventory
+
+| Function | Usage | Description | When Introduced |
+|----------|-------|-------------|-----------------|
+| **Dynamic Array Functions (Office 365/2021)** |
+| XLOOKUP | High | Advanced lookup function | 2020 (Excel for Office 365 version 2001/Build 12430.20184) |
+| UNIQUE | Medium | Returns unique values | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| FILTER | Medium | Filters data arrays | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| SORTBY | Medium | Sorts data by criteria | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| LET | Low | Defines variables in formulas | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
+| **Modern Functions (Excel 2007-2019)** |
+| SWITCH | Low | Multiple condition evaluation | Excel 2016 (2015) |
+| **Classic Functions (Excel 97-2007)** |
+| HYPERLINK | High | Creates clickable links | Excel 97 (1997) |
+| SUBTOTAL | Medium | Subtotal calculations for dynamic filtering | Excel 97 (1997) |
+| TRANSPOSE | Medium | Transposes arrays | Excel 1.0 (1987) - Available since early Excel versions |
+| **Legacy Functions (Excel 1.0-95)** |
+| IF | High | Conditional logic | Excel 1.0 (1987) - Core function since inception |
+| MONTH | Medium | Extracts month from date | Excel 1.0 (1987) - Core date function |
+| YEAR | Medium | Extracts year from date | Excel 1.0 (1987) - Core date function |
+| RIGHT | Medium | Text extraction | Excel 1.0 (1987) - Core text function |
+| CEILING | Low | Rounds up to nearest integer | Excel 1.0 (1987) - Core math function |
+| ROUNDUP | Low | Rounds numbers up | Excel 1.0 (1987) - Core math function |
+| TEXT | Low | Text formatting | Excel 1.0 (1987) - Core text function |
+| CONCATENATE | Low | Text concatenation | Excel 4.0 (1992) |
+| SUM | High | Summation | Excel 1.0 (1987) - Core function since inception |
+| COUNT | Low | Count functions | Excel 1.0 (1987) - Core function since inception |
+| MAX | Low | Maximum value | Excel 1.0 (1987) - Core function since inception |
+| MIN | Low | Minimum value | Excel 1.0 (1987) - Core function since inception |
+
+
+#### Named Ranges Inventory
+
+| Name | Type | Reference | Sheet | Hidden | Description |
+|------|------|-----------|-------|---------|-------------|
+| calendarType | User Defined | Pipeline!$B$2 | Global | No | Calendar type setting |
+| custList | User Defined | Settings!$E$2 | Global | No | Customer list reference |
+| dateRange | User Defined | Pipeline!$D$2 | Global | No | Date range setting |
+| fqStart | User Defined | Settings!$B$1 | Global | No | Fiscal quarter start |
+| oppList | User Defined | Settings!$E$3 | Global | No | Opportunities list reference |
+| pipelineType | User Defined | Pipeline!$B$3 | Global | No | Pipeline type setting |
+| probabilityThreshold | User Defined | Settings!$B$2 | Global | No | Probability threshold setting |
+| siteUrl | User Defined | Settings!$E$1 | Global | No | SharePoint site URL |
+| _xlchart.v2.0 | Chart Range | graphics!$A$11:$A$16 | Global | Yes | Chart data series 1 |
+| _xlchart.v2.1 | Chart Range | graphics!$C$11:$C$16 | Global | Yes | Chart data series 2 |
+| ExternalData_1 | External Data | 'Customers'!$A$1:$K$31 | Customers | Yes | Customer Sharepoint List |
+| ExternalData_2 | External Data | Opportunities!$A$1:$L$37 | Opportunities | Yes | Opportunity Sharepoint List |
+| ExternalData_3 | External Data | Pipeline!$M$7:$M$43 | Pipeline | Yes | Pipeline View |
+| Slicer_Close_Quarter | Slicer | #N/A | Global | No | Close quarter slicer |
+| Slicer_Stage | Slicer | #N/A | Global | No | Stage slicer |
+
+### Interesting functions
+#### Recurrence
+The spreadsheet leverages a lambda function to generate a table of transactions from the recurrence data in the opportunity table:
+
+> Although an interesting and fun approach, I will move this from lambda to M to avoid spill conditions and simplfiy downstream calculations and filtering.
+
+```lambda
+=LET(
+    source_data, recurrence,
+    ids, INDEX(source_data,,1),
+    customer_ids, INDEX(source_data,,2),
+    models, INDEX(source_data,,3),
+    recurrences, INDEX(source_data,,4),
+    start_dates, INDEX(source_data,,5),
+    amounts, INDEX(source_data,,6),
+    fq_values, INDEX(source_data,,7),
+    cq_values, INDEX(source_data,,8),
+
+    expanded_data, REDUCE(
+        {"ID","CustomerID","Date","Amount","FQ","CQ"},
+        SEQUENCE(ROWS(source_data)),
+        LAMBDA(acc,i,
+            LET(
+                current_id, INDEX(ids, i),
+                current_customer_id, INDEX(customer_ids, i),
+                current_model, INDEX(models, i),
+                current_recur, MAX(1, INDEX(recurrences, i)),
+                current_start, INDEX(start_dates, i),
+                current_amount, INDEX(amounts, i),
+                current_fq, INDEX(fq_values, i),
+                current_cq, INDEX(cq_values, i),
+
+                interval_days, SWITCH(current_model,
+                    "Monthly", 30,
+                    "Quarterly", 91,
+                    "Semi-Annually", 182,
+                    "Annually", 365,
+                    "Usage-based", 30,
+                    "One-time", 0,
+                    0
+                ),
+
+                dates_for_id, IF(current_model="One-time",
+                    SEQUENCE(current_recur, 1, current_start, 0),
+                    current_start + (SEQUENCE(current_recur) - 1) * interval_days
+                ),
+
+                ids_for_entry, SEQUENCE(current_recur, 1, current_id, 0),
+                customer_ids_for_entry, IF(SEQUENCE(current_recur), current_customer_id),
+                amounts_for_entry, SEQUENCE(current_recur, 1, current_amount, 0),
+                fq_for_entry, IF(SEQUENCE(current_recur), current_fq),
+                cq_for_entry, IF(SEQUENCE(current_recur), current_cq),
+
+                current_block, HSTACK(
+                    ids_for_entry,
+                    customer_ids_for_entry,
+                    dates_for_id,
+                    amounts_for_entry,
+                    fq_for_entry,
+                    cq_for_entry
+                ),
+
+                VSTACK(acc, current_block)
+            )
+        )
+    ),
+
+    expanded_data
+)
+```
+
+#### Fiscal Year Calculations
+Based on the fiscal start declared in `fqStart`
+
+```
+="FY"&RIGHT(IF(MONTH([@Close])>=MONTH(fqStart),YEAR([@Close])+1,YEAR([@Close])),2)&"-Q"&IF(MONTH([@Close])>=MONTH(fqStart),CEILING((MONTH([@Close])-MONTH(fqStart)+1)/3,1),CEILING((MONTH([@Close])+12-MONTH(fqStart)+1)/3,1))
+```
+
 ## Power Query (M Code)
 These queries provide a reusable template for connecting to SharePoint sites and lists defined by variables within the workbook itself. To implement this code, developers should create two named ranges in their Excel workbook: "siteUrl" containing the SharePoint site URL, and "custList" containing the exact name of the customer list as it appears in SharePoint. The query automatically handles SharePoint authentication, filters to the specified list, and expands the customer data into a flat table structure suitable for Power BI integration or Excel analysis and visualization. 
 
@@ -92,149 +274,4 @@ let
     #"Removed Columns" = Table.RemoveColumns(#"Expanded Website",{"Title"})
 in
     #"Removed Columns"
-```
-
-## Excel
-### Formula Patterns
-
-#### High Complexity Formulas
-- **Dynamic Arrays**: Extensive use of UNIQUE, FILTER, SORTBY, and TRANSPOSE
-- **Nested Lookups**: Multiple XLOOKUP functions with complex criteria
-- **Structured References**: Heavy use of Excel table references (e.g., `View[[#This Row],[Id]]`)
-- **Complex Text Operations**: Date formatting and URL generation
-
-#### Primary Formula Patterns
-1. **Data Lookup and Display**: XLOOKUP patterns for retrieving related data
-2. **Dynamic Filtering**: FILTER and UNIQUE combinations for data analysis
-3. **URL Generation**: HYPERLINK formulas for SharePoint integration
-4. **Date Calculations**: Complex fiscal year and quarter calculations
-5. **Data Visualization Support**: Array formulas for chart data preparation
-
-#### External Dependencies
-- SharePoint Lists (Opportunities, Customers)
-- Named ranges for configuration settings
-- External data connections for real-time updates
-
-
-### Function Inventory
-
-The spreadsheet uses 21 unique Excel functions:
-
-# Excel Functions Introduction Timeline
-
-| Function | Usage | Description | When Introduced |
-|----------|-------|-------------|-----------------|
-| **Dynamic Array Functions (Office 365/2021)** |
-| XLOOKUP | High | Advanced lookup function | 2020 (Excel for Office 365 version 2001/Build 12430.20184) |
-| UNIQUE | Medium | Returns unique values | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
-| FILTER | Medium | Filters data arrays | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
-| SORTBY | Medium | Sorts data by criteria | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
-| LET | Low | Defines variables in formulas | December 2019 (Excel for Office 365 version 1911/Build 12228.20332) |
-| **Modern Functions (Excel 2007-2019)** |
-| SWITCH | Low | Multiple condition evaluation | Excel 2016 (2015) |
-| **Classic Functions (Excel 97-2007)** |
-| HYPERLINK | High | Creates clickable links | Excel 97 (1997) |
-| SUBTOTAL | Medium | Subtotal calculations for dynamic filtering | Excel 97 (1997) |
-| TRANSPOSE | Medium | Transposes arrays | Excel 1.0 (1987) - Available since early Excel versions |
-| **Legacy Functions (Excel 1.0-95)** |
-| IF | High | Conditional logic | Excel 1.0 (1987) - Core function since inception |
-| MONTH | Medium | Extracts month from date | Excel 1.0 (1987) - Core date function |
-| YEAR | Medium | Extracts year from date | Excel 1.0 (1987) - Core date function |
-| RIGHT | Medium | Text extraction | Excel 1.0 (1987) - Core text function |
-| CEILING | Low | Rounds up to nearest integer | Excel 1.0 (1987) - Core math function |
-| ROUNDUP | Low | Rounds numbers up | Excel 1.0 (1987) - Core math function |
-| TEXT | Low | Text formatting | Excel 1.0 (1987) - Core text function |
-| CONCATENATE | Low | Text concatenation | Excel 4.0 (1992) |
-| SUM | High | Summation | Excel 1.0 (1987) - Core function since inception |
-| COUNT | Low | Count functions | Excel 1.0 (1987) - Core function since inception |
-| MAX | Low | Maximum value | Excel 1.0 (1987) - Core function since inception |
-| MIN | Low | Minimum value | Excel 1.0 (1987) - Core function since inception |
-
-
-### Named Ranges Inventory
-
-| Name | Type | Reference | Sheet | Hidden | Description |
-|------|------|-----------|-------|---------|-------------|
-| calendarType | User Defined | Pipeline!$B$2 | Global | No | Calendar type setting |
-| custList | User Defined | Settings!$E$2 | Global | No | Customer list reference |
-| dateRange | User Defined | Pipeline!$D$2 | Global | No | Date range setting |
-| fqStart | User Defined | Settings!$B$1 | Global | No | Fiscal quarter start |
-| oppList | User Defined | Settings!$E$3 | Global | No | Opportunities list reference |
-| pipelineType | User Defined | Pipeline!$B$3 | Global | No | Pipeline type setting |
-| probabilityThreshold | User Defined | Settings!$B$2 | Global | No | Probability threshold setting |
-| siteUrl | User Defined | Settings!$E$1 | Global | No | SharePoint site URL |
-| _xlchart.v2.0 | Chart Range | graphics!$A$11:$A$16 | Global | Yes | Chart data series 1 |
-| _xlchart.v2.1 | Chart Range | graphics!$C$11:$C$16 | Global | Yes | Chart data series 2 |
-| ExternalData_1 | External Data | 'Customers'!$A$1:$K$31 | Customers | Yes | Customer Sharepoint List |
-| ExternalData_2 | External Data | Opportunities!$A$1:$L$37 | Opportunities | Yes | Opportunity Sharepoint List |
-| ExternalData_3 | External Data | Pipeline!$M$7:$M$43 | Pipeline | Yes | Pipeline View |
-| Slicer_Close_Quarter | Slicer | #N/A | Global | No | Close quarter slicer |
-| Slicer_Stage | Slicer | #N/A | Global | No | Stage slicer |
-
-## Recurrence
-The spreadsheet leverages a lambda function to generate a table of transactions from the recurrence data in the opportunity table:
-
-```lambda
-=LET(
-    source_data, recurrence,
-    ids, INDEX(source_data,,1),
-    customer_ids, INDEX(source_data,,2),
-    models, INDEX(source_data,,3),
-    recurrences, INDEX(source_data,,4),
-    start_dates, INDEX(source_data,,5),
-    amounts, INDEX(source_data,,6),
-    fq_values, INDEX(source_data,,7),
-    cq_values, INDEX(source_data,,8),
-
-    expanded_data, REDUCE(
-        {"ID","CustomerID","Date","Amount","FQ","CQ"},
-        SEQUENCE(ROWS(source_data)),
-        LAMBDA(acc,i,
-            LET(
-                current_id, INDEX(ids, i),
-                current_customer_id, INDEX(customer_ids, i),
-                current_model, INDEX(models, i),
-                current_recur, MAX(1, INDEX(recurrences, i)),
-                current_start, INDEX(start_dates, i),
-                current_amount, INDEX(amounts, i),
-                current_fq, INDEX(fq_values, i),
-                current_cq, INDEX(cq_values, i),
-
-                interval_days, SWITCH(current_model,
-                    "Monthly", 30,
-                    "Quarterly", 91,
-                    "Semi-Annually", 182,
-                    "Annually", 365,
-                    "Usage-based", 30,
-                    "One-time", 0,
-                    0
-                ),
-
-                dates_for_id, IF(current_model="One-time",
-                    SEQUENCE(current_recur, 1, current_start, 0),
-                    current_start + (SEQUENCE(current_recur) - 1) * interval_days
-                ),
-
-                ids_for_entry, SEQUENCE(current_recur, 1, current_id, 0),
-                customer_ids_for_entry, IF(SEQUENCE(current_recur), current_customer_id),
-                amounts_for_entry, SEQUENCE(current_recur, 1, current_amount, 0),
-                fq_for_entry, IF(SEQUENCE(current_recur), current_fq),
-                cq_for_entry, IF(SEQUENCE(current_recur), current_cq),
-
-                current_block, HSTACK(
-                    ids_for_entry,
-                    customer_ids_for_entry,
-                    dates_for_id,
-                    amounts_for_entry,
-                    fq_for_entry,
-                    cq_for_entry
-                ),
-
-                VSTACK(acc, current_block)
-            )
-        )
-    ),
-
-    expanded_data
-)
 ```
