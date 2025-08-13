@@ -33,18 +33,20 @@
 **SharePoint Developer/Operators** will enjoy:
 
 - **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
+- **Flexible Deployment Methods** - Deploy from code in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read [DevOps](./docs/auto-deploy.md) and [code guide](./docs/code-guide.md) to understand the ground-up implementation
-- **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
+- **Integrated IAM** - Use regular M365 features for self-service or workflow-driven user management
 - **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
 - **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
 - **Worry-free Licensing** - [MIT License](./LICENSE)
 
 **Project Builders** deploying on their own will learn: 
 - **Excel functions** - [Excel formulas](./docs/code-guide.md/#formula-patterns), conditions, logic, arrays
+- **Ready-made dataset** - realistic sample data to test out modeling, visualization and summarization techniques
 - **Dashboarding** - [Visualizations](#screenshots), conditional formatting, array presentation
 - **Data Modeling** - [Data entity](#relationship-diagram) relationships
 - **Extract/Transform/Load** - [Environment-portable ETL](./docs/code-guide.md/#power-query-m-code) using Power Query
+- **Form Construction** - Form customization with [JSON](./docs/form-body-json.md)
 - **SharePoint Automation** - PowerShell 7 PnP [automation](./docs/auto-deploy.md#1-create-list) & [authentication](./docs/auto-deploy.md/#prerequisites)
 - **SharePoint Governance** - [Security](./docs/security.md), audit, drift reporting, DLP and governance controls
 
