@@ -71,6 +71,17 @@ Refresh settings are the defaults for Excel.  If using in production, consider a
 - [Code Guide](./docs/code-guide.md): ETL process description & Excel functions 
 - [Security Guide](./docs/security.md): Security Assessment Script & further reading
 
+## Architecture
+```mermaid
+graph TD
+    B[Power BI]
+    C[Excel]
+    A[SharePoint<br/>• Customers<br/>• Opportunities<br/>• Milestones] 
+    
+    B -.->|REST API| A
+    C -.->|REST API| A
+```
+
 ## Relationship Diagram
 
 ```mermaid
