@@ -6,7 +6,7 @@
 [![Power Query](https://img.shields.io/badge/Power%20Query-Enabled-orange.svg)](https://powerquery.microsoft.com/)
 [![PowerShell 7 Required](https://img.shields.io/badge/PowerShell%207-Recommended-yellow.svg)](https://github.com/PowerShell/PowerShell)
 
-> A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, three-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
+> A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized (50 user) teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, three-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
 
 
 ## Documentation Quick Start
@@ -23,7 +23,7 @@
 - **Risk Reporting** - sales phase management and alerting
 - **Fiscal Year Support** - Customizable fiscal quarters and calendar systems
 - **Milestone Tracking** - Deliverable management
-- **Integrated Document Library** - Attach any document type to any record in the pipeline
+- **Document Library** - Attach any document type to any record in the pipeline
 - **Commenting and user tagging** - Office-style comments, user tagging, and actions 
 - **Opportunity Health** - User-defined, score-based opportunity health indicators 
 - **Hyperlinked Navigation** - Direct links to SharePoint records
@@ -36,17 +36,17 @@
 - **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
 - **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
 - **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
-- **[Bulk list management](./deployment/day-2/readme.md/#2-manage-listsps1)** - Manage lists en masse
-- **[Auditing tools](./deployment/day-2/readme.md/#1-audit-list-securtyps1)** - Audit and drift detection scripts
-- **[Worry-free Licensing](./LICENSE)** - MIT License
+- **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
+- **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
+- **Worry-free Licensing** - [MIT License](./LICENSE)
 
 **Project Builders** deploying on their own will learn: 
-- **Excel functions** - Excel formulas, conditions, logic, arrays
-- **Dashboarding** - Visualizations, conditional formatting, array presentation
-- **Data Modeling** - Data Entity Relationships
-- **Extract/Transform/Load** - Environment-portable ETL using Power Query
-- **SharePoint Automation** - PowerShell 7 PnP automation & authentication
-- **SharePoint Governance** - Audit, drift reporting, DLP and governance controls
+- **Excel functions** - [Excel formulas](./docs/code-guide.md/#formula-patterns), conditions, logic, arrays
+- **Dashboarding** - [Visualizations](#screenshots), conditional formatting, array presentation
+- **Data Modeling** - [Data entity](#relationship-diagram) relationships
+- **Extract/Transform/Load** - [Environment-portable ETL](./docs/code-guide.md/#power-query-m-code) using Power Query
+- **SharePoint Automation** - PowerShell 7 PnP [automation](./docs/auto-deploy.md#1-create-list) & [authentication](./docs/auto-deploy.md/#prerequisites)
+- **SharePoint Governance** - [Security](./docs/security.md), audit, drift reporting, DLP and governance controls
 
 # Quick Start (Excel)
 1. Identify the Site URL and List Prefix of your pipeline
@@ -188,8 +188,10 @@ erDiagram
 ## Known Issues
 
 ## Roadmap
+- Converged Excel dashboard
 - PBI dashboard
 - Mobile dashboard
 - Mobile interface
+- Cascading Milestone selector
 - User-defined Phase
 - User defined Status
