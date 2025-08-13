@@ -9,9 +9,18 @@ Before deploying on your own, read the short [security guide](./security.md) to 
 
 Refer to the [code guide](./code-guide.md) if you are interested in adapting the m code to other use cases or learning more about the formulas leveraged in visualizations.
 
+- [Manual Deployment](#manual-deployment)
+- [Process](#process)
+  - [1. Determine your Tenant Name](#1-determine-your-tenant-name)
+  - [2. Locate or create a Sharepoint Team Site](#2-locate-or-create-a-sharepoint-team-site)
+  - [3. Create lists](#3-create-lists)
+  - [4. Create Lookups](#4-create-lookups)
+  - [5. Clean up](#5-clean-up)
+  - [6. Launch](#6-launch)
+
 ### Process
 
-#### Locate your Tenant Name
+#### 1. Determine your Tenant Name
 
 Before you proceed, you will need your sharepoint **tenant name** and a sharepoint **site name**
 
@@ -19,35 +28,32 @@ To determine your **tenant name**, navigate to <a href="https://portal.office.co
 
 https://**yourPortalName**.sharepoint.com/_layouts/15/sharepoint.aspx?&login_hint=yourUserNameg@yourOrgDomain.com
 
-#### Locate or create a Sharepoint Team Site 
+#### 2. Locate or create a Sharepoint Team Site 
 
 Refer to [this video](https://www.youtube.com/embed/HQw5nRwAJFc?si=lQHoK6gRMOGDAvXW) for more information about creating SharePoint sites.
 
-#### Create lists 
-Use a consistent available prefix
-- [Customers](../deployment/Customers.csv)
-- [Opportunities](../deployment/Opportunities.csv)
+#### 3. Create lists 
+Use a consistent available prefix with the following templates
+> **IMPORTANT**:  The excel and PBI templates assume a consistent naming convention of **prefixListname**.  If you don't follow the convention, the record linking will not work
 
-#### Create Custoner Name Lookup
-> Copy/Paste from CustomerId
+- [Customers](../deployment/templates/Customers.csv) 
+- [Opportunities](../deployment/templates/Opportunities.csv)
+- [Milestones](../deployment/templates/Milestones.csv)
 
+#### 4. Create Lookups
+- Opportunities > Customers
+- Milestones > Opportunities
 
-#### (optional) apply body JSON format
-Leverage this as body JSON on the respective forms to clean up the look and feel for data entry.
+#### 5. Clean up
+- Adjust columns in views
+- Apply [form body json](./form-body-json.md)
+- Create selection pill colors
+- Create test opportunities
 
-If you plan to make extensive use of the sharepoint forms, you should apply [form body json](./form-body-json.md)
+#### 6. Launch
+- Refresh the Excel, verify function
+- Deploy Power BI dashboard, verify function
+- Add users to site
+- Share PBI with regular users
+- Copy excel for power users
 
-#### Prep the lists for prod
-- Delete all rows
-- Add a test customer
-- Add a test opportunity
-- Add users to the site members
-
-#### Launch and modify settings in Citizen Deployed Frontend excel
-- Open the excel
-- Modify site URL and list names
-- Refresh all
-- Verify functionality
-
-#### (Optional) Create and Link Calendar View
-Lists has a very functional calendar view.  Navigate to the Opportunities list, and create it.  Note the view GUID and populate it in the settings.
