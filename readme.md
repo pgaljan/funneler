@@ -16,18 +16,7 @@
 - [Code Guide](./docs/code-guide.md)
 - [Form Body JSON](./docs/form-body-json.md)
 
-## Operator Features
-**SharePoint DevOps** will enjoy:
-
-- **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
-- **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
-- **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
-- **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
-- **Bulk list management** - Manage lists en masse
-- **Auditing tools** - Audit and drift detection scripts
-- **Worry-free Licensing** - MIT License
-
-## User Features
+## Features
 **Business Developers** will find a robust set of pipeline management features: 
 
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel
@@ -38,8 +27,17 @@
 - **Hyperlinked Navigation** - Direct links to SharePoint records
 - **Multi-user Collaboration** - SharePoint-backed team workflows
 
-## Project builder experience
-**Citizen developers** deploying on their own will learn: 
+**SharePoint Developer/Operators** will enjoy:
+
+- **Easy Governance Controls** - Protect sensitive data and comply with regulations using existing M365 governance policies
+- **Flexible Deployment Methods** - Deploy in minutes with near-complete [powershell automation](./docs/auto-deploy.md)
+- **Thorough Documentation** - Read the [code guide](./docs/code-guide.md) to understand the ground-up implementation
+- **Integrated IAM** - Use regular M365 features for sharing, user tagging and commenting
+- **Bulk list management** - Manage lists en masse
+- **Auditing tools** - Audit and drift detection scripts
+- **Worry-free Licensing** - MIT License
+
+**Project Builders** deploying on their own will learn: 
 - **Excel functions** - Excel formulas, conditions, logic, arrays
 - **Dashboarding** - Visualizations, conditional formatting, array presentation
 - **Data Modeling** - Data Entity Relationships
