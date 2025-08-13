@@ -6,7 +6,7 @@
 [![Power Query](https://img.shields.io/badge/Power%20Query-Enabled-orange.svg)](https://powerquery.microsoft.com/)
 [![PowerShell 7 Required](https://img.shields.io/badge/PowerShell%207-Recommended-yellow.svg)](https://github.com/PowerShell/PowerShell)
 
-> A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, two-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
+> A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, three-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
 
 
 ## Documentation Quick Start
@@ -71,17 +71,43 @@ Refresh settings are the defaults for Excel.  If using in production, consider a
 - [Code Guide](./docs/code-guide.md): ETL process description & Excel functions 
 - [Security Guide](./docs/security.md): Security Assessment Script & further reading
 
-## Architecture
+## Relationship Diagram
 
 ```mermaid
-graph TD
+erDiagram
+    CUSTOMERS ||--o{ OPPORTUNITIES : "has"
+    OPPORTUNITIES ||--o{ MILESTONES : "contains"
+    
+    CUSTOMERS {
+        string Customer_Name PK "Primary identifier"
+        string Website
+        string NAICS_code "Industry classification"
+        string Status "Prospect/Active/Inactive/Lost"
+    }
+    
+    OPPORTUNITIES {
+        string Opportunity_Name PK "Primary identifier"
+        string Status "Active/At Risk/Critical"
+        string Opportunity_Owner
+        string Stage "Lead Qualification/Nurturing/Proposal/Negotiation/Project Execution/Closeout"
+        currency Opportunity_Value
+        string Win_Probability "Low/Medium/High"
+        datetime Expected_Close_Date
+        string Recurring_Revenue_Model "Up Front/Annually/Quarterly/Monthly"
+        number Recurrences
+        datetime Start_Date
+        string CustomerId FK "References Customer_Name"
+        text Comment_Log
+    }
+    
+    MILESTONES {
+        string Name PK "Milestone name"
+        string Opportunity FK "References Opportunity_Name"
+        string Owner "Person responsible"
+        datetime Date "Milestone date"
+        string Status "Not Started/In Progress/Completed/On Hold/Cancelled"
+    }
 
-Opportunities --> PowerQuery[Power Query] 
-Customers -.->|1:Many| Opportunities 
-Customers --> PowerQuery
-PowerQuery --> Excel[Excel/PBI]
-Excel -.->|hyperlink| Opportunities
-Excel -.->|hyperlink| Customers
 ```
 
 ## Screenshots

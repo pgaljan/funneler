@@ -31,7 +31,7 @@ Install PnP PowerShell module
 ```powershell
 Install-Module -Name PnP.PowerShell -Force -AllowClobber -Scope CurrentUser
 Get-Module -Name PnP.PowerShell -ListAvailable
-mport-Module PnP.PowerShell -Force
+Import-Module PnP.PowerShell -Force
 ```
 
 Configure TLS/Security
