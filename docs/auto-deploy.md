@@ -51,29 +51,41 @@ The following scripts leverage interactive authentication, meaning you will be p
 ![deploy scripts](./images/deployScripts.png)
 > The excel file autoforms your powershell according to the excel file's configuration.  Highly recommend you leverage this
 
-Create List
+### 1. Create List
 ```powershell
 .\Deploy-Lists.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
+> Creates the core tables
 
-Flag Fields as required
+### 2. Flag Fields as required
 ```powershell
 .\Set-Required-Fields.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
+> Flags fields as required in the core tables
 
-Turn on list versioning, and add a multi-line plain text field with append
+### 3. Add Comment Log
 ```powershell
 .\Add-Comment-Log.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
+> Turns on List versioning for the Opportunities list, adds comment log
 
-Populate list with sample data
+### 4. Populate list with sample data
 ```powershell
 .\Add-Comment-Log.ps1 -SiteUrl "https://your-tenant-name.sharepoint.com/sites/your-site-name/" -ListPrefix "yourPrefix" 
 ```
-## List fine tuning:
+> Optional, but useful for testing
 
-System should be functional, but the following are useful for production deployments:
-* Apply [form body json](./form-body-json.md)
-* Pill body colors for Status & Stage
-* Create Calendar View in Lists
+
+#### 5. Clean up
+- Adjust columns in views
+- Apply [form body json](./form-body-json.md)
+- Create selection pill colors
+- Clear the lists
+
+#### 6. Launch
+- Refresh the Excel, verify function
+- Deploy Power BI dashboard, verify function
+- Add users to site
+- Share PBI with regular users
+- Copy excel for power users
 
