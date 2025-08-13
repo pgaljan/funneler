@@ -1,5 +1,13 @@
 This workflow brings you through the process of an automatic deployment of the sales funneler solution.
 
+- [Prerequisites](#prerequisites)
+- [List configuration](#list-configuration)
+  - [1. Create List](#1-create-list)
+  - [2. Flag Fields as required](#2-flag-fields-as-required)
+  - [3. Add Comment Log](#3-add-comment-log)
+  - [4. Populate list with sample data](#4-populate-list-with-sample-data)
+  - [5. Clean up](#5-clean-up)
+  - [6. Launch](#6-launch)
 
 ## Prerequisites
 
@@ -76,16 +84,15 @@ The following scripts leverage interactive authentication, meaning you will be p
 > Optional, but useful for testing
 
 
-#### 5. Clean up
+### 5. Clean up
 - Adjust columns in views
 - Apply [form body json](./form-body-json.md)
 - Create selection pill colors
 - Clear the lists
 
-#### 6. Launch
+### 6. Launch
 - Refresh the Excel, verify function
 - Deploy Power BI dashboard, verify function
 - Add users to site
 - Share PBI with regular users
 - Copy excel for power users
-
