@@ -9,6 +9,7 @@
 > A Sharepoint and Excel learning kit comprised of a production-grade sales pipeline management system for small to mid-sized (50 user) teams.  Featuring  on-demand sync with Excel for visualization, and containing thorough documentation, it is a solid introduction to building a sustainable, governable two-tier application in the Microsoft ecosystem. The simple, three-table data model allows the exploration of these concepts without requiring a background in data structure management, while maintaining usefulness and stability when deployed in production.
 
 
+
 ## Documentation Quick Start
 - [SharePoint DevOps Guide](./docs/auto-deploy.md)
 - [Citizen Developer Guide](./docs/manual-deploy.md)
@@ -38,7 +39,7 @@
 - **Integrated IAM** - Use regular M365 features for self-service or workflow-driven user management
 - **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
 - **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
-- **Worry-free Licensing** - [MIT License](./LICENSE)
+- **Worry-free Licensing & Roadmap** - [MIT License](./LICENSE), with a transparent and openly contributable [issue backlog](https://github.com/pgaljan/funneler/issues)
 
 **Project Builders** deploying on their own will learn: 
 - **Excel functions** - [Excel formulas](./docs/code-guide.md/#formula-patterns), conditions, logic, arrays
@@ -186,10 +187,22 @@ erDiagram
 
 
 ## Issues
-### Known Issues
-- ETL will not work across DevOps and User-directed deployment 
-  - (*Workaround* - two excel dashboards)
 
+![Issues](https://img.shields.io/github/issues/pgaljan/funneler)
+![Closed Issues](https://img.shields.io/github/issues-closed/pgaljan/funneler)
+![Pull Requests](https://img.shields.io/github/issues-pr/pgaljan/funneler)
+
+### Known Issues
+- **[Issue 7](https://github.com/pgaljan/funneler/issues/7)** -  ETL will not work across DevOps and User-directed deployment 
+  - (*Workaround* - mutliple dashboards)
+
+
+
+
+### Feature Enhancements
+If the feature you want is not listed below, open an issue on github.  Include, at minimum, leveraging the [user persona](./docs/user-persona.md):
+- **User story** (As a `user persona`, I would like  `feature`, so that I can `achieve outcome`)
+- **Acceptance Criterion** (Given I am `role` in `tool/interface`, when I `perform action`, I `observe outcome`)
 
 ### Bugs
 Use the github issues to create bugs.  Include, at minimum:
@@ -197,25 +210,17 @@ Use the github issues to create bugs.  Include, at minimum:
 - **Expected behavior**  - (when I `take action`, I expect `certain values, output, or behavior`)
 - **Actual behavior** - (but I observe `undesired outcome`)
 - **Workarounds** - (I have tried `alternative workflows` to resolve this)
-- **Screenshots** - (this is what I mean)
-
-### Feature Enhancements
-If the feature you want is not listed below, open an issue on github.  Include, at minimum, leveraging the [user persona](./docs/user-persona.md):
-- **User story** (As a `user persona`, I would like to `feature`, so that I can `achieve outcome`)
-- *Acceptance Criterion* (Given I am `role` in `tool/interface`, when I `perform action`, I `observe outcome`)
+- **Screenshots** - (here is the surrounding visual context)
 
 
 
 ## Roadmap
 | DevOps | BizOps | Learner |
 | --- | --- | --- |
-| One-command install |BizOps User Guide | Data Dictionary |
-| Form Body JSON | Converged Excel dashboard | PowerShell Walkthrough |
-| List Item JSON | PBI dashboard | Function Walkthrough |
-| List View Config | Mobile interface| ETL Walkthrough |
-| Automated PBI deploy | Mobile dashboard | Visualization Walkthrough |
-| Menufy Day 2 | Cascading Milestone selector |  |
-| Issues | User-defined Phase |  |
-|  | User defined Stage |  |
-|  | User defined Status |  |
+| [One-command install](https://github.com/pgaljan/funneler/issues/1) |[BizOps User Guide](https://github.com/pgaljan/funneler/issues/6) | [Data Dictionary](https://github.com/pgaljan/funneler/issues/13) |
+| [Deploy Versioning](https://github.com/pgaljan/funneler/issues/18) | [Converged ETL](https://github.com/pgaljan/funneler/issues/7) | [Text Walkthroughs](https://github.com/pgaljan/funneler/issues/15) |
+| | [PBI dashboard](https://github.com/pgaljan/funneler/issues/4) | [Video Walkthroughs](https://github.com/pgaljan/funneler/issues/16) |
+| | [Mobile enablement](https://github.com/pgaljan/funneler/issues/17) |  |
+| | [Cascading Milestone selector](https://github.com/pgaljan/funneler/issues/10) |  |
+|  | [User-defined Attributes](https://github.com/pgaljan/funneler/issues/11) |  |
 
