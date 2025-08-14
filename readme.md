@@ -11,13 +11,16 @@
 
 
 ## Documentation Quick Start
-- [SharePoint DevOps Guide](./docs/auto-deploy.md)
+- [DevOps Guide](./docs/auto-deploy.md)
 - [Citizen Developer Guide](./docs/manual-deploy.md)
+- [BizOps Guide](./docs/bizops-guide.md)
 - [Security & Governance](./docs/security.md)
 - [Code Guide](./docs/code-guide.md)
 - [Form Body JSON](./docs/form-body-json.md)
 
 ## Features
+
+
 **Business Operations Professionals** will find a robust set of pipeline management features: 
 
 - **Dynamic Pipeline Dashboard** - Stateless, visually rich sales funnel

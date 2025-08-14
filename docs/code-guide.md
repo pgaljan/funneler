@@ -9,6 +9,7 @@ The solution contains several types of code:
 - [Funneler Code Guide](#funneler-code-guide)
   - [Architecture](#architecture)
   - [Relationship Diagram](#relationship-diagram)
+  - [Mock Template Creation](#mock-template-creation)
   - [Excel](#excel)
     - [Formula Patterns](#formula-patterns)
       - [High Complexity Formulas](#high-complexity-formulas)
@@ -88,6 +89,9 @@ erDiagram
 
 ```
 > `Transactions` table is calculated via power query or Lambda function, depending on implementation
+
+## Mock Template Creation
+1. Load as desired, export to [mocks](../../deployment/day-1/MOCK/)
 
 ## Excel
 
