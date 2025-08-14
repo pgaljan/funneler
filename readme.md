@@ -118,9 +118,9 @@ Use the github issues to create bugs.  Include, at minimum:
 ## Roadmap
 | DevOps | BizOps | Learner |
 | --- | --- | --- |
-| [One-command install](https://github.com/pgaljan/funneler/issues/1) |[BizOps User Guide](https://github.com/pgaljan/funneler/issues/6) | [Data Dictionary](https://github.com/pgaljan/funneler/issues/13) |
-| [Deploy Versioning](https://github.com/pgaljan/funneler/issues/18) | [Converged ETL](https://github.com/pgaljan/funneler/issues/7) | [Text Walkthroughs](https://github.com/pgaljan/funneler/issues/15) |
-| | [PBI dashboard](https://github.com/pgaljan/funneler/issues/4) | [Video Walkthroughs](https://github.com/pgaljan/funneler/issues/16) |
+| [One-command install](https://github.com/pgaljan/funneler/issues/1) |[BizOps User Guide](https://github.com/pgaljan/funneler/issues/6) | [Text Walkthroughs](https://github.com/pgaljan/funneler/issues/15) |
+| [Deploy Versioning](https://github.com/pgaljan/funneler/issues/18) | [Converged ETL](https://github.com/pgaljan/funneler/issues/7) | [Video Walkthroughs](https://github.com/pgaljan/funneler/issues/16) |
+| | [PBI dashboard](https://github.com/pgaljan/funneler/issues/4) |  |
 | | [Mobile enablement](https://github.com/pgaljan/funneler/issues/17) |  |
 | | [Cascading Milestone selector](https://github.com/pgaljan/funneler/issues/10) |  |
 |  | [User-defined Attributes](https://github.com/pgaljan/funneler/issues/11) |  |
