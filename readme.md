@@ -102,16 +102,23 @@
 
 ### Feature Enhancements
 If the feature you want is not listed below, open an issue on github.  Include, at minimum, leveraging the [user persona](./docs/user-persona.md):
-- **User story** (As a `user persona`, I would like  `feature`, so that I can `achieve outcome`)
-- **Acceptance Criterion** (Given I am `role` in `tool/interface`, when I `perform action`, I `observe outcome`)
+- **User story** 
+    > As a `user persona`, I would like  `feature`, so that I can `achieve outcome`
+- **Acceptance Criterion**
+    > Given I am `explicit RBAC role` in `tool/interface`, when I `perform action`, I `observe or interact with outcome`)
 
 ### Bugs
 Use the github issues to create bugs.  Include, at minimum:
-- **Task** - (I am trying to `achieve outcome` with `tool` in `environment` running `version`)
-- **Expected behavior**  - (when I `take action`, I expect `certain values, output, or behavior`)
-- **Actual behavior** - (but I observe `undesired outcome`)
-- **Workarounds** - (I have tried `alternative workflows` to resolve this)
-- **Screenshots** - (here is the surrounding visual context)
+- **Task**
+    > I am trying to `achieve outcome` with `tool` in `environment` running `version`
+- **Expected behavior**  
+`> when I `take action`, I expect `certain values, output, or behavior`
+- **Actual behavior**
+    > but I observe `undesired outcome`
+- **Workarounds** 
+    >I have tried `alternative workflows` to resolve this
+- **Screenshots & Logs** 
+    > here is the surrounding telemetry & visual context
 
 
 
