@@ -7,6 +7,8 @@ The solution contains several types of code:
 > This solution leverages array formulas only available in Office 365.
 
 - [Funneler Code Guide](#funneler-code-guide)
+  - [Architecture](#architecture)
+  - [Relationship Diagram](#relationship-diagram)
   - [Excel](#excel)
     - [Formula Patterns](#formula-patterns)
       - [High Complexity Formulas](#high-complexity-formulas)
@@ -22,6 +24,70 @@ The solution contains several types of code:
     - [Opportunities Data Connection](#opportunities-data-connection)
     - [Customers Data Connection](#customers-data-connection)
     - [Transaction Table](#transaction-table)
+
+
+## Architecture
+```mermaid
+graph TD
+    B[Power BI]
+    C[Excel]
+    A[SharePoint<br/>• Customers<br/>• Opportunities<br/>• Milestones] 
+    
+    B -.->|REST API| A
+    C -.->|REST API| A
+```
+
+## Relationship Diagram
+
+```mermaid
+erDiagram
+    CUSTOMERS ||--o{ OPPORTUNITIES : "has"
+    OPPORTUNITIES ||--o{ MILESTONES : "contains"
+    OPPORTUNITIES ||--o{ TRANSACTIONS : "contains"
+    
+    CUSTOMERS {
+        int CustomerId PK "Primary identifier"
+        string CustomerName 
+        string Website
+        string NAICScode "[]"
+        string Status "[]"
+    }
+    
+    OPPORTUNITIES {
+        int OpportunityId PK "Primary identifier"
+        string OpportunityName 
+        string Status "[]"
+        string OpportunityOwner
+        string Stage "[]"
+        currency OpportunityValue
+        string WinProbability "[]"
+        datetime ExpectedCloseDate
+        string RecurringRevenueModel "[]"
+        number Recurrences
+        datetime Start_Date
+        int CustomerId FK 
+        text Comment_Log "multi-line append" 
+    }
+    
+    MILESTONES {
+        int MilestoneId PK "Milestone name"
+        string MilestoneName
+        string OpportunityId FK 
+        string Owner "Person responsible"
+        datetime Date "Milestone date"
+        string Status "[]"
+    }
+
+    TRANSACTIONS {
+        int TransactionId PK 
+        int OpportunityId FK
+        int CustomerId FK
+        datetime TransactionDate 
+        string Status "[]"
+    }
+
+```
+> `Transactions` table is calculated via power query or Lambda function, depending on implementation
 
 ## Excel
 
