@@ -43,6 +43,7 @@
 - **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
 - **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
 - **Worry-free Licensing & Roadmap** - [MIT License](./LICENSE), with a transparent, openly contributable [issue backlog](https://github.com/pgaljan/funneler/issues)
+
 **Project Builders** deploying on their own will learn: 
 - **Excel functions** - [Excel formulas](./docs/code-guide.md/#formula-patterns), conditions, logic, arrays
 - **Ready-made dataset** - realistic sample data to test out modeling, visualization and summarization techniques
