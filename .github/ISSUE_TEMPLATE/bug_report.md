@@ -7,21 +7,20 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+- **Task**
+    > I am trying to `achieve outcome` with `tool` in `environment` running `version`
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+- **Expected behavior**  
+`> when I `take action`, I expect `certain values, output, or behavior`
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- **Actual behavior**
+    > but I observe `undesired outcome`
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+- **Workarounds** 
+    >I have tried `alternative workflows` to resolve this
+
+- **Screenshots, Logs, Files** 
+    > here is the surrounding telemetry & visual context
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
