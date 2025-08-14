@@ -93,18 +93,14 @@
 ![Closed Issues](https://img.shields.io/github/issues-closed/pgaljan/funneler)
 ![Pull Requests](https://img.shields.io/github/issues-pr/pgaljan/funneler)
 
-### Prioritization
-Make sure you are expressing your complete workflow when filing bugs and enhancement requests.   Bugs or Features that lack the necessary features for completeness will take longer to identify and resolve.  
+### Filing Issues
+Leverage the [user persona](./docs/user-persona.md) to create user stories around bug and feature issues.  Clear use cases will be prioritized, so be sure to fill out as many template prompts as you are able.
+  
 
 ### Known Issues
 - **[Issue 7](https://github.com/pgaljan/funneler/issues/7)** -  ETL will not work across DevOps and User-directed deployment 
   - (*Workaround* - mutliple dashboards)
 
-
-
-
-### Filing Issues
-Leverage the [user persona](./docs/user-persona.md) to create user stories around bug and feature issues.  Clear use cases will be prioritized, so be sure to fill out as many template prompts as you are able.
 
 ### Roadmap
 | DevOps | BizOps | Learner |
