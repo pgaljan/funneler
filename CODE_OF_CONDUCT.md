@@ -91,11 +91,7 @@ We are committed to fostering an open, welcoming, and inclusive environment wher
 ## Reporting and Enforcement
 
 ### Reporting Issues
-If you experience or witness behavior that violates this Code of Ethics:
-
-1. **For non-urgent issues**: Open an issue using our [Code of Ethics template](.github/ISSUE_TEMPLATE/code-of-ethics.md)
-2. **For sensitive matters**: Email our moderation team at [conduct@projectname.org](mailto:conduct@projectname.org)
-3. **For security issues**: Follow our [Security Policy](SECURITY.md)
+If you experience or witness behavior that violates this Code of Ethics, open an [issue](https://github.com/pgaljan/funneler/issues) using our Code of Ethics template
 
 All reports will be handled confidentially and investigated promptly.
 

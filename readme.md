@@ -42,7 +42,7 @@
 - **Integrated IAM** - Use regular M365 features for self-service or workflow-driven user management
 - **Bulk list management** - [Manage lists](./deployment/day-2/readme.md/#2-manage-listsps1) en masse
 - **Auditing tools** - [Audit](./deployment/day-2/readme.md/#1-audit-list-securtyps1) and drift detection scripts
-- **Worry-free Licensing & Roadmap** - [MIT License](./LICENSE), with a transparent and openly contributable [issue backlog](https://github.com/pgaljan/funneler/issues)
+- **Worry-free Licensing & Roadmap** - [MIT License](./LICENSE), openly contributable [issue backlog](https://github.com/pgaljan/funneler/issues), and robust [Code of Conduct](CODE_OF_CONDUCT.md) framework
 
 **Project Builders** deploying on their own will learn: 
 - **Excel functions** - [Excel formulas](./docs/code-guide.md/#formula-patterns), conditions, logic, arrays
