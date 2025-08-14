@@ -1,14 +1,15 @@
 # Funneler Code Guide
-The solution contains several types of code:
-1. Power/Query/M for ETL into Excel and PBI
-2. Excel functions (including modern array and LAMBDA) functions for calculation and visualization
-3. Powershell for automated Day 1 and Day 2 operations against Sharepoint Lists
 
-> This solution leverages array formulas only available in Office 365.
 
 - [Funneler Code Guide](#funneler-code-guide)
   - [Architecture](#architecture)
-  - [Relationship Diagram](#relationship-diagram)
+  - [Data Dictionary](#data-dictionary)
+    - [Table: Customers](#table-customers)
+    - [Table: Contacts](#table-contacts)
+    - [Table: Opportunities](#table-opportunities)
+    - [Table: Milestones](#table-milestones)
+    - [Relationship Diagram](#relationship-diagram)
+    - [Entity Relationships](#entity-relationships)
   - [Mock Template Creation](#mock-template-creation)
   - [Excel](#excel)
     - [Formula Patterns](#formula-patterns)
@@ -38,7 +39,79 @@ graph TD
     C -.->|REST API| A
 ```
 
-## Relationship Diagram
+
+## Data Dictionary
+
+### Table: Customers
+
+**Description:** Master table containing information about customer organizations, their status, and primary contact details.
+
+| Attribute | Data Type | ERD Definition | User-Friendly Description |
+|-----------|-----------|----------------|---------------------------|
+| Customer Name | VARCHAR(100) | PK - Primary identifier for customer entity | The official business name of the customer organization |
+| Website | VARCHAR(255) | URL of customer's primary website | Customer's main website address for reference and validation |
+| NAICS code | CHAR(6) | North American Industry Classification System identifier | Industry classification code that categorizes the customer's primary business sector |
+| Status | VARCHAR(20) | Enumerated value (Active, Prospect, Inactive) | Current relationship status indicating engagement level with the customer |
+| Primary Contact | VARCHAR(100) | Name of main point of contact | Full name of the primary decision-maker or main contact person |
+| Primary Contact Title | VARCHAR(100) | Job title of primary contact | Official job title/position of the primary contact within their organization |
+| Alternate Contact | VARCHAR(100) | Name of secondary contact | Full name of the backup or secondary contact person |
+| Alternate Contact Title | VARCHAR(100) | Job title of alternate contact | Official job title/position of the alternate contact |
+| Alternate Contact 2 | VARCHAR(100) | Name of tertiary contact | Full name of the third contact person for comprehensive coverage |
+| Alternate Contact 2 Title | VARCHAR(100) | Job title of second alternate contact | Official job title/position of the second alternate contact |
+
+---
+
+### Table: Contacts
+
+**Description:** Detailed contact information table containing individual contact records with communication details.
+
+| Attribute | Data Type | ERD Definition | User-Friendly Description |
+|-----------|-----------|----------------|---------------------------|
+| Name | VARCHAR(100) | PK - Unique identifier for contact person | Full name of the individual contact person |
+| Job Title | VARCHAR(100) | Professional role/position | Current job title or role within their organization |
+| Office Phone | VARCHAR(15) | Business telephone number | Primary office phone number for business communications |
+| Mobile Phone | VARCHAR(15) | Mobile telephone number | Personal or business mobile phone for direct contact |
+| Email | VARCHAR(100) | Email address for digital communication | Primary email address for electronic correspondence |
+| Customer | VARCHAR(100) | FK referencing Customers.Customer Name | Links contact to their parent customer organization |
+
+---
+
+### Table: Opportunities
+
+**Description:** Sales opportunity tracking table containing deal information, stages, and revenue projections.
+
+| Attribute | Data Type | ERD Definition | User-Friendly Description |
+|-----------|-----------|----------------|---------------------------|
+| Status | VARCHAR(20) | Enumerated value (Active, At Risk, Critical, Completed) | Current health status of the sales opportunity |
+| Customer | VARCHAR(100) | FK referencing Customers.Customer Name | Customer organization associated with this opportunity |
+| Opportunity Name | VARCHAR(200) | PK - Unique identifier for the deal | Descriptive name identifying the specific project or service being sold |
+| Opportunity Owner | VARCHAR(100) | Sales representative responsible | Name of the sales person or account manager owning this opportunity |
+| Stage | VARCHAR(50) | Sales process stage | Current position in the sales pipeline (Lead Qualification, Proposal, Negotiation, etc.) |
+| Opportunity Value | DECIMAL(12,2) | Monetary value in currency | Total potential revenue value of the deal in dollars |
+| Win Probability | VARCHAR(10) | Likelihood assessment (High, Medium, Low) | Estimated probability of successfully closing the deal |
+| Expected Close Date | DECIMAL(10,5) | Date in Excel serial format | Projected date when the deal is expected to close |
+| Next Deadline or Milestone | DECIMAL(10,5) | Date in Excel serial format | Date of the next critical deadline or milestone |
+| Next Milestone | VARCHAR(100) | Upcoming key activity | Description of the next important step or deliverable |
+| Recurring Revenue Model | VARCHAR(20) | Revenue frequency pattern | How often revenue is collected (Monthly, Quarterly, Annually, One-time, Semi-Annually) |
+| Recurrences | INTEGER | Number of billing cycles | Total number of times revenue will be collected over the contract period |
+| Start Date | DECIMAL(10,5) | Date in Excel serial format | Planned or actual project start date |
+
+---
+
+### Table: Milestones
+
+**Description:** Project milestone tracking table containing individual tasks and deliverables within opportunities.
+
+| Attribute | Data Type | ERD Definition | User-Friendly Description |
+|-----------|-----------|----------------|---------------------------|
+| Status | VARCHAR(20) | Enumerated value (Completed, In Progress, Not Started) | Current completion status of the milestone |
+| Name | VARCHAR(200) | Descriptive identifier for the milestone | Specific name or description of the milestone activity |
+| Opportunity | VARCHAR(200) | FK referencing Opportunities.Opportunity Name | Links milestone to its parent sales opportunity |
+| Owner | VARCHAR(100) | Person responsible for completion | Name of the individual or role responsible for delivering this milestone |
+| Date | DECIMAL(10,5) | Date in Excel serial format | Target completion date or actual completion date for the milestone |
+
+---
+### Relationship Diagram
 
 ```mermaid
 erDiagram
@@ -47,7 +120,7 @@ erDiagram
     OPPORTUNITIES ||--o{ TRANSACTIONS : "contains"
     
     CUSTOMERS {
-        int CustomerId PK "Primary identifier"
+        int CustomerId PK 
         string CustomerName 
         string Website
         string NAICScode "[]"
@@ -55,7 +128,7 @@ erDiagram
     }
     
     OPPORTUNITIES {
-        int OpportunityId PK "Primary identifier"
+        int OpportunityId PK 
         string OpportunityName 
         string Status "[]"
         string OpportunityOwner
@@ -71,11 +144,11 @@ erDiagram
     }
     
     MILESTONES {
-        int MilestoneId PK "Milestone name"
+        int MilestoneId PK 
         string MilestoneName
         string OpportunityId FK 
-        string Owner "Person responsible"
-        datetime Date "Milestone date"
+        string Owner 
+        datetime Date
         string Status "[]"
     }
 
@@ -89,6 +162,27 @@ erDiagram
 
 ```
 > `Transactions` table is calculated via power query or Lambda function, depending on implementation
+
+### Entity Relationships
+
+**Primary Relationships:**
+- Customers (1) → Contacts (Many): One customer can have multiple contact persons
+- Customers (1) → Opportunities (Many): One customer can have multiple sales opportunities  
+- Opportunities (1) → Milestones (Many): One opportunity can have multiple project milestones
+
+**Key Business Rules:**
+- Each customer must have at least one primary contact
+- Opportunities must be linked to an existing customer
+- Milestones must be associated with a valid opportunity
+- Date fields use Excel serial date format (days since 1/1/1900)
+- Status fields use controlled vocabularies for data consistency
+
+**Data Quality Notes:**
+- NAICS codes should be validated against official classification system
+- Email addresses should follow standard email format validation
+- Phone numbers follow XXX-XXX-XXXX format
+- URLs should include proper protocol (https://)
+- Currency values stored without formatting symbols
 
 ## Mock Template Creation
 1. Load as desired, export to [mocks](../../deployment/day-1/MOCK/)
